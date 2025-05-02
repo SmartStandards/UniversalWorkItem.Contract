@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>UniversalWorkItem.Connectors.ExchangeOnlineTasks</AssemblyName>
+    <RootNamespace></RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PackageId>UniversalWorkItem.Connectors.ExchangeOnlineTasks</PackageId>
+    <Description>UniversalWorkItem.Connectors.ExchangeOnlineTasks</Description>
+    <Product>UniversalWorkItem.Connectors.ExchangeOnlineTasks</Product>
+    <Company>(public domain)</Company>
+    <Copyright>SmartStandards</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Authors>SmartStandards</Authors>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageTags></PackageTags>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>..\..\dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml</DocumentationFile>
+    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DefineConstants>TRACE;DEBUG;NET5</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <DocumentationFile>..\..\dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml</DocumentationFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DefineConstants>TRACE;NET5</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>UniversalWorkItem.Contract.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.1" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UniversalWorkItem.Contract.net6.0\UniversalWorkItem.Contract.net6.0.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems" Label="Shared" />
+
+</Project>

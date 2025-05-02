@@ -6,7 +6,7 @@
 
 ## Upcoming Changes
 
-*(none)*
+* Added empty body-projects for wanted connectors: AzureDevOps, ExchangeOnlineTasks, GitHubIssues, Trello
 
 
 

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B0BA06FE-6437-4B9E-8C76-3ADFC8D191D2}</ProjectGuid>
+    <ProjectGuid>{63D69BC1-E935-421B-BC85-972AACC8EFF6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Collaboration.WorkTracking</RootNamespace>
-    <AssemblyName>UniversalWorkItem.Contract</AssemblyName>
+    <AssemblyName>UniversalWorkItem.Connectors.ExchangeOnlineTasks</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
@@ -22,7 +22,7 @@
     <DefineConstants>TRACE;DEBUG;NET46</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dist\bin-net48\UniversalWorkItem.Contract.xml</DocumentationFile>
+    <DocumentationFile>..\..\dist\bin-net48\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +32,7 @@
     <DefineConstants>TRACE;NET46</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dist\bin-net48\UniversalWorkItem.Contract.xml</DocumentationFile>
+    <DocumentationFile>..\..\dist\bin-net48\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -57,6 +57,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\UniversalWorkItem.Contract.net48\UniversalWorkItem.Contract.net48.csproj">
+      <Project>{b0ba06fe-6437-4b9e-8c76-3adfc8d191d2}</Project>
+      <Name>UniversalWorkItem.Contract.net48</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

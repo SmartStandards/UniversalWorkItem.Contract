@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>UniversalWorkItem.Connectors.AzureDevOps</id>
+    <version>0.0.1-localbuild</version>
+    <title>UniversalWorkItem.Connectors.AzureDevOps</title>
+    <authors>SmartStandards</authors>
+    <owners>(public domain)</owners>
+    <copyright>SmartStandards</copyright>
+    <description>UniversalWorkItem.Connectors.AzureDevOps</description>
+    <tags>WorkItem TODO Board</tags>
+    <!-- https://spdx.org/licenses/ -->
+    <license type="expression">GPL-3.0-only</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>PackageIcon.png</icon>
+    <projectUrl>https://github.com/SmartStandards/UniversalWorkItem.Contract</projectUrl>
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
+        <!--<dependency id="FUSE-fx.RepositoryContract" version="0.5.2" /> GRAD KAPUTT-->
+        <dependency id="Newtonsoft.Json" version="13.0.3" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.2" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" />      
+      </group>
+      <!-- <group targetFramework="net8.0">
+        <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" /
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.2" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" /> 
+      </group>-->
+    </dependencies>
+  </metadata>
+  <files>
+    <!-- https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#from-a-convention-based-working-directory -->
+    <file src="PackageIcon.png" target="" />
+    <!-- .NET 4.8 -->
+    <file src="dist\bin-net48\UniversalWorkItem.Connectors.AzureDevOps.dll" target="lib/net48" />
+    <file src="dist\bin-net48\UniversalWorkItem.Connectors.AzureDevOps.xml" target="lib/net48" />
+    <file src="dist\bin-net48\UniversalWorkItem.Connectors.AzureDevOps.pdb" target="lib/net48" />
+    <!-- .NET 6.0 -->
+    <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.dll" target="lib/net6.0" />
+    <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.xml" target="lib/net6.0" />
+    <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.pdb" target="lib/net6.0" />
+    <!-- .NET 8.0 -->
+    <!-- <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.dll" target="lib/net8.0" />
+    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.AzureDevOps.xml" target="lib/net8.0" />
+    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.AzureDevOps.pdb" target="lib/net8.0" />-->
+  </files>
+</package>

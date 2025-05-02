@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		..\js\package.json = ..\js\package.json
+		UniversalWorkItem.Connectors.AzureDevOps.nuspec = UniversalWorkItem.Connectors.AzureDevOps.nuspec
+		UniversalWorkItem.Connectors.ExchangeOnlineTasks.nuspec = UniversalWorkItem.Connectors.ExchangeOnlineTasks.nuspec
+		UniversalWorkItem.Connectors.GitHubIssues.nuspec = UniversalWorkItem.Connectors.GitHubIssues.nuspec
+		UniversalWorkItem.Connectors.Trello.nuspec = UniversalWorkItem.Connectors.Trello.nuspec
 		UniversalWorkItem.Contract.nuspec = UniversalWorkItem.Contract.nuspec
 		..\js\src\workItem.ts = ..\js\src\workItem.ts
 	EndProjectSection
@@ -33,6 +37,40 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Contract.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UniversalWorkItem.Connectors.AzureDevOps", "src\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.shproj", "{9092EA3A-4171-44B4-A503-A6F3013A4D7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.AzureDevOps.net6.0", "src\UniversalWorkItem.Connectors.AzureDevOps.net6.0\UniversalWorkItem.Connectors.AzureDevOps.net6.0.csproj", "{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.AzureDevOps.net8.0", "src\UniversalWorkItem.Connectors.AzureDevOps.net8.0\UniversalWorkItem.Connectors.AzureDevOps.net8.0.csproj", "{4DA8786D-B2BD-9B04-5708-DBD315648DB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.AzureDevOps.net48", "src\UniversalWorkItem.Connectors.AzureDevOps.net48\UniversalWorkItem.Connectors.AzureDevOps.net48.csproj", "{0152CE70-0D0F-4DC6-8081-32E3781E2463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.TestApp", "test\UniversalWorkItem.TestApp\UniversalWorkItem.TestApp.csproj", "{3235AED3-05D8-574D-63DB-5205F67EB8E9}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UniversalWorkItem.Connectors.GitHubIssues", "src\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.shproj", "{4C1599E3-C147-4B22-9EAD-42AEEAC8A78F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UniversalWorkItem.Connectors.Trello", "src\UniversalWorkItem.Connectors.Trello\UniversalWorkItem.Connectors.Trello.shproj", "{7B3FBF55-50B6-488E-B23D-59AE3F249364}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.GitHubIssues.net6.0", "src\UniversalWorkItem.Connectors.GitHubIssues.net6.0\UniversalWorkItem.Connectors.GitHubIssues.net6.0.csproj", "{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.GitHubIssues.net8.0", "src\UniversalWorkItem.Connectors.GitHubIssues.net8.0\UniversalWorkItem.Connectors.GitHubIssues.net8.0.csproj", "{42FA126A-F816-5439-A064-28A792E1E2CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.GitHubIssues.net48", "src\UniversalWorkItem.Connectors.GitHubIssues.net48\UniversalWorkItem.Connectors.GitHubIssues.net48.csproj", "{F473692C-64C3-4B99-9431-232ED02B041A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.Trello.net6.0", "src\UniversalWorkItem.Connectors.Trello.net6.0\UniversalWorkItem.Connectors.Trello.net6.0.csproj", "{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.Trello.net8.0", "src\UniversalWorkItem.Connectors.Trello.net8.0\UniversalWorkItem.Connectors.Trello.net8.0.csproj", "{C997FEF2-6C6C-8FEC-802F-C198931693EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.Trello.net48", "src\UniversalWorkItem.Connectors.Trello.net48\UniversalWorkItem.Connectors.Trello.net48.csproj", "{EB46F568-AEA9-4AF6-BDE7-2DC04F892913}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UniversalWorkItem.Connectors.ExchangeOnlineTasks", "src\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.shproj", "{3105D753-87F5-4310-8D6F-140B0F9C99E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.ExchangeOnlineTasks.net6.0", "src\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net6.0.csproj", "{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.ExchangeOnlineTasks.net8.0", "src\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net8.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net8.0.csproj", "{B59C4836-AD4A-F0EC-097D-803144129716}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalWorkItem.Connectors.ExchangeOnlineTasks.net48", "src\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net48\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net48.csproj", "{63D69BC1-E935-421B-BC85-972AACC8EFF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +91,50 @@ Global
 		{B0BA06FE-6437-4B9E-8C76-3ADFC8D191D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0BA06FE-6437-4B9E-8C76-3ADFC8D191D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0BA06FE-6437-4B9E-8C76-3ADFC8D191D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DA8786D-B2BD-9B04-5708-DBD315648DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA8786D-B2BD-9B04-5708-DBD315648DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0152CE70-0D0F-4DC6-8081-32E3781E2463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0152CE70-0D0F-4DC6-8081-32E3781E2463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0152CE70-0D0F-4DC6-8081-32E3781E2463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0152CE70-0D0F-4DC6-8081-32E3781E2463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3235AED3-05D8-574D-63DB-5205F67EB8E9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3235AED3-05D8-574D-63DB-5205F67EB8E9}.Debug|Any CPU.Build.0 = Debug|x64
+		{3235AED3-05D8-574D-63DB-5205F67EB8E9}.Release|Any CPU.ActiveCfg = Release|x64
+		{3235AED3-05D8-574D-63DB-5205F67EB8E9}.Release|Any CPU.Build.0 = Release|x64
+		{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42FA126A-F816-5439-A064-28A792E1E2CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42FA126A-F816-5439-A064-28A792E1E2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F473692C-64C3-4B99-9431-232ED02B041A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F473692C-64C3-4B99-9431-232ED02B041A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F473692C-64C3-4B99-9431-232ED02B041A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F473692C-64C3-4B99-9431-232ED02B041A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C997FEF2-6C6C-8FEC-802F-C198931693EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C997FEF2-6C6C-8FEC-802F-C198931693EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB46F568-AEA9-4AF6-BDE7-2DC04F892913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB46F568-AEA9-4AF6-BDE7-2DC04F892913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB46F568-AEA9-4AF6-BDE7-2DC04F892913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB46F568-AEA9-4AF6-BDE7-2DC04F892913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B59C4836-AD4A-F0EC-097D-803144129716}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B59C4836-AD4A-F0EC-097D-803144129716}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D69BC1-E935-421B-BC85-972AACC8EFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D69BC1-E935-421B-BC85-972AACC8EFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D69BC1-E935-421B-BC85-972AACC8EFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D69BC1-E935-421B-BC85-972AACC8EFF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,14 +146,47 @@ Global
 		{732D4247-867F-4161-B0CF-C12950A4B996} = {C5272353-539E-4138-93FD-9DF437F6DA47}
 		{B0BA06FE-6437-4B9E-8C76-3ADFC8D191D2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {EFB5135D-039A-4D92-8FDD-9EA5D070F991}
+		{9092EA3A-4171-44B4-A503-A6F3013A4D7B} = {EFB5135D-039A-4D92-8FDD-9EA5D070F991}
+		{24FD3230-98D3-7CA5-E1B6-CDDAF24EEB05} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4DA8786D-B2BD-9B04-5708-DBD315648DB1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0152CE70-0D0F-4DC6-8081-32E3781E2463} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{3235AED3-05D8-574D-63DB-5205F67EB8E9} = {C5272353-539E-4138-93FD-9DF437F6DA47}
+		{4C1599E3-C147-4B22-9EAD-42AEEAC8A78F} = {EFB5135D-039A-4D92-8FDD-9EA5D070F991}
+		{7B3FBF55-50B6-488E-B23D-59AE3F249364} = {EFB5135D-039A-4D92-8FDD-9EA5D070F991}
+		{4533113C-D9EE-4ECF-FCC8-E2E6DCD98B88} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{42FA126A-F816-5439-A064-28A792E1E2CC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F473692C-64C3-4B99-9431-232ED02B041A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E980D9CF-1E89-BA58-0F9B-AC2A33BE7B18} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C997FEF2-6C6C-8FEC-802F-C198931693EF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{EB46F568-AEA9-4AF6-BDE7-2DC04F892913} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{3105D753-87F5-4310-8D6F-140B0F9C99E0} = {EFB5135D-039A-4D92-8FDD-9EA5D070F991}
+		{D9F03ABE-5919-2A2F-47C1-BD4C9BF38550} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B59C4836-AD4A-F0EC-097D-803144129716} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{63D69BC1-E935-421B-BC85-972AACC8EFF6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2F37C1D-32F0-4BF2-AAEB-46B9D8C07D23}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.projitems*{0152ce70-0d0f-4dc6-8081-32e3781e2463}*SharedItemsImports = 4
+		src\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.projitems*{24fd3230-98d3-7ca5-e1b6-cddaf24eeb05}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems*{3105d753-87f5-4310-8d6f-140b0f9c99e0}*SharedItemsImports = 13
+		src\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.projitems*{42fa126a-f816-5439-a064-28a792e1e2cc}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.projitems*{4533113c-d9ee-4ecf-fcc8-e2e6dcd98b88}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.projitems*{4c1599e3-c147-4b22-9ead-42aeeac8a78f}*SharedItemsImports = 13
+		src\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.projitems*{4da8786d-b2bd-9b04-5708-dbd315648db1}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems*{63d69bc1-e935-421b-bc85-972aacc8eff6}*SharedItemsImports = 4
+		src\UniversalWorkItem.Connectors.Trello\UniversalWorkItem.Connectors.Trello.projitems*{7b3fbf55-50b6-488e-b23d-59ae3f249364}*SharedItemsImports = 13
 		src\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems*{7b5baea8-7e79-4a30-b6c1-4da4831af970}*SharedItemsImports = 5
 		src\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems*{88f15535-fad8-4372-80dc-fd0d8c81ab4c}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.projitems*{9092ea3a-4171-44b4-a503-a6f3013a4d7b}*SharedItemsImports = 13
 		src\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems*{b0ba06fe-6437-4b9e-8c76-3adfc8d191d2}*SharedItemsImports = 4
+		src\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems*{b59c4836-ad4a-f0ec-097d-803144129716}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.Trello\UniversalWorkItem.Connectors.Trello.projitems*{c997fef2-6c6c-8fec-802f-c198931693ef}*SharedItemsImports = 5
 		src\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems*{cf0a161a-99ba-4f01-af5e-16c6fcbc85ae}*SharedItemsImports = 13
+		src\UniversalWorkItem.Connectors.ExchangeOnlineTasks\UniversalWorkItem.Connectors.ExchangeOnlineTasks.projitems*{d9f03abe-5919-2a2f-47c1-bd4c9bf38550}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.Trello\UniversalWorkItem.Connectors.Trello.projitems*{e980d9cf-1e89-ba58-0f9b-ac2a33be7b18}*SharedItemsImports = 5
+		src\UniversalWorkItem.Connectors.Trello\UniversalWorkItem.Connectors.Trello.projitems*{eb46f568-aea9-4af6-bde7-2dc04f892913}*SharedItemsImports = 4
+		src\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.projitems*{f473692c-64c3-4b99-9431-232ed02b041a}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal
