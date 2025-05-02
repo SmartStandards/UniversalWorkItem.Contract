@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>UniversalWorkItem.Contract</AssemblyName>
+    <RootNamespace></RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PackageId>UniversalWorkItem.Contract</PackageId>
+    <Description>UniversalWorkItem.Contract</Description>
+    <Product>UniversalWorkItem.Contract</Product>
+    <Company>(public domain)</Company>
+    <Copyright>SmartStandards</Copyright>
+    <Version>0.0.1</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Authors>SmartStandards</Authors>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageTags></PackageTags>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Contract.xml</DocumentationFile>
+    <OutputPath>..\..\dist\bin-net8.0\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DefineConstants>TRACE;DEBUG;NET5</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\dist\bin-net8.0\</OutputPath>
+    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Contract.xml</DocumentationFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DefineConstants>TRACE;NET5</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="..\UniversalWorkItem.Contract\UniversalWorkItem.Contract.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.1" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>
