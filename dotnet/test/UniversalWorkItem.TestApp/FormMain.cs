@@ -29,7 +29,8 @@ namespace UniversalWorkItem.TestApp {
 
     private void LoadFields() {
       try {
-        var decryptionMethod = (string encStr) => { return (new UTF8Encoding()).GetString(Convert.FromBase64String(Enumerable.Range(0, encStr.Length / 2).Select(i => encStr.Substring(i * 2, 2)).Select(x => (char)Convert.ToInt32(x, 16)).Aggregate(new StringBuilder(), (x, y) => x.Append(y)).ToString())); };
+        Func<string,string> decryptionMethod = (string encStr) => { return (new UTF8Encoding()).GetString(Convert.FromBase64String(Enumerable.Range(0, encStr.Length / 2).Select(i => encStr.Substring(i * 2, 2)).Select(x => (char)Convert.ToInt32(x, 16)).Aggregate(new StringBuilder(), (x, y) => x.Append(y)).ToString())); };
+               
         string fileFullName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SmartStandards\\UniversalWorkItemTestApp\\uistate.json");
         if (!File.Exists(fileFullName))
           return;
@@ -59,7 +60,7 @@ namespace UniversalWorkItem.TestApp {
 
     private void SaveFields() {
       try {
-        var encryptionMethod = (string plaintext) => { return Convert.ToBase64String((new UTF8Encoding()).GetBytes(plaintext)).ToCharArray().Select(x => String.Format("{0:X}", (int)x)).Aggregate(new StringBuilder(), (x, y) => x.Append(y)).ToString(); };
+        Func<string, string> encryptionMethod = (string plaintext) => { return Convert.ToBase64String((new UTF8Encoding()).GetBytes(plaintext)).ToCharArray().Select(x => String.Format("{0:X}", (int)x)).Aggregate(new StringBuilder(), (x, y) => x.Append(y)).ToString(); };
         var fields = new Dictionary<string, object>();
 
         //fields["authorizeUrl"] = txtAuthorizeUrl.Text;
