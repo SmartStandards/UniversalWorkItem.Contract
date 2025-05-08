@@ -1,14 +1,10 @@
 ﻿using System;
+using System.Data.Fuse;
 
 namespace Collaboration.WorkTracking {
 
-#if NET5_0_OR_GREATER
-  //GRAD KAPUTT - PACKET GEHT NOCH NICHT FÜR .NET 48!
-
-  public interface IWorkItemRepository : System.Data.Fuse.IRepository<WorkItem, WorkItemIdentity> {
+  public interface IWorkItemRepository : IRepository<WorkItem, WorkItemIdentity> {
   }
-
-#endif
 
   public static class WorkItemRepositoryExtensions {
 

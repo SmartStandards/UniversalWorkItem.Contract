@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Collaboration.WorkTracking {
 
+  [DebuggerDisplay("#{OriginRelatedId}")]
   public class WorkItemIdentity {
 
     /// <summary>
@@ -22,8 +24,13 @@ namespace Collaboration.WorkTracking {
       return new WorkItemIdentity { Origin = item.Origin, OriginRelatedId = item.OriginRelatedId };
     }
 
+    public override int GetHashCode() {
+      return $"{OriginRelatedId}@{Origin}".GetHashCode();
+    }
+
   }
 
+  [DebuggerDisplay("#{OriginRelatedId}: {Title}")]
   public partial class WorkItem : WorkItemIdentity {
 
     #region " Workitem Type, Location & Order "
@@ -214,6 +221,10 @@ namespace Collaboration.WorkTracking {
     /// SystemData (like the AuditTrail or UserComments etc.) or 'Checklist-Entries' (if supported) 
     /// </summary>
     public LinkedItem[] LinkedItems { get; set; } = new LinkedItem[] { };
+
+    public override string ToString() {
+      return this.Title;
+    }
 
   }
   

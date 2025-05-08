@@ -17,21 +17,27 @@
     <dependencies>
       <group targetFramework=".NETFramework4.8">
         <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
-        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
-        <!--<dependency id="FUSE-fx.RepositoryContract" version="0.5.2" /> GRAD KAPUTT-->
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.2" />
+        <dependency id="FUSE-fx.ModelDescription" version="2.0.16" />
+        <dependency id="FUSE-fx.ModelReader" version="0.2.8" />
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.3" />
         <dependency id="Newtonsoft.Json" version="13.0.3" />
       </group>
       <group targetFramework="net6.0">
         <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
-        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
-        <dependency id="FUSE-fx.RepositoryContract" version="0.5.2" />
-        <dependency id="Newtonsoft.Json" version="13.0.3" />      
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.2" />
+        <dependency id="FUSE-fx.ModelDescription" version="2.0.16" />
+        <dependency id="FUSE-fx.ModelReader" version="0.2.8" />
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.3" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" />   
       </group>
       <!-- <group targetFramework="net8.0">
-        <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" /
-        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
-        <dependency id="FUSE-fx.RepositoryContract" version="0.5.2" />
-        <dependency id="Newtonsoft.Json" version="13.0.3" /> 
+        <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
+        <dependency id="FUSE-fx.EntityAnnotations" version="4.1.2" />
+        <dependency id="FUSE-fx.ModelDescription" version="2.0.16" />
+        <dependency id="FUSE-fx.ModelReader" version="0.2.8" />
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.3" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" />
       </group>-->
     </dependencies>
   </metadata>

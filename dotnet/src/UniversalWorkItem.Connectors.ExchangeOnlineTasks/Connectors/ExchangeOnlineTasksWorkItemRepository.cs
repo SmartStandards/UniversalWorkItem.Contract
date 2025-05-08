@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NET5_0_OR_GREATER
 using System.Data.Fuse;
-#endif
 
 namespace Collaboration.WorkTracking.Connectors.ExchangeOnlineTasks {
-
-#if NET5_0_OR_GREATER
 
   public class ExchangeOnlineTasksWorkItemRepository : IWorkItemRepository {
 
@@ -115,7 +111,5 @@ namespace Collaboration.WorkTracking.Connectors.ExchangeOnlineTasks {
       throw new NotImplementedException();
     }
   }
-
-#endif
 
 }

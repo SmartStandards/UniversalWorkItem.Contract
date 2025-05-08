@@ -11,13 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="3.2.0" />
-    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.1" />
-    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.2" />
+    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.16" />
+    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.8" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.8.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.8.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.2" />
   </ItemGroup>
 
   <ItemGroup>

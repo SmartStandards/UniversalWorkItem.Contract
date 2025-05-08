@@ -9,9 +9,7 @@
     <Import_RootNamespace>Collaboration.WorkTracking</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Connectors\WorkItemCustomFieldExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connectors\AzureDevOpsWorkItemRepository.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Connectors\" />
   </ItemGroup>
 </Project>

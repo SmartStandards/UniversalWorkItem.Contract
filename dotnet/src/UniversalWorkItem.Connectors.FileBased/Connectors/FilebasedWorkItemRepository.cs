@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NET5_0_OR_GREATER
 using System.Data.Fuse;
-#endif
 
-namespace Collaboration.WorkTracking.Connectors.OOB {
+namespace Collaboration.WorkTracking.Connectors.FileBased {
 
-#if NET5_0_OR_GREATER
+  //TODO: auslagern - muss per T4 kommen aus AFS(localfilestore) + FUSE-JsonFileDB
 
   public class FilebasedWorkItemRepository : IWorkItemRepository {
 
+    //TODO: System.Data.Fuse.JsonDbEngine ist ein UniveralRepo
+    //       RWE fragen obs da jetzt wein wrapper giebt oder wovon ich erben kann
+    //         :TypedRepo<TItem>(inngerUniversalRepo: JsonDbEngine)
+
     public FilebasedWorkItemRepository(string accessToken) {
-
-
+      throw new NotImplementedException();
     }
 
     public WorkItem AddOrUpdateEntity(WorkItem entity) {
@@ -115,7 +116,5 @@ namespace Collaboration.WorkTracking.Connectors.OOB {
       throw new NotImplementedException();
     }
   }
-
-#endif
 
 }

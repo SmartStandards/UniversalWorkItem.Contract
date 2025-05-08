@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>UniversalWorkItem.Connectors.GitHubIssues</AssemblyName>
+    <AssemblyName>UniversalWorkItem.Connectors.FileBased</AssemblyName>
     <RootNamespace></RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <PropertyGroup>
-    <PackageId>UniversalWorkItem.Connectors.GitHubIssues</PackageId>
-    <Description>UniversalWorkItem.Connectors.GitHubIssues</Description>
-    <Product>UniversalWorkItem.Connectors.GitHubIssues</Product>
+    <PackageId>UniversalWorkItem.Connectors.FileBased</PackageId>
+    <Description>UniversalWorkItem.Connectors.FileBased</Description>
+    <Product>UniversalWorkItem.Connectors.FileBased</Product>
     <Company>(public domain)</Company>
     <Copyright>SmartStandards</Copyright>
     <Version>0.0.1</Version>
@@ -21,7 +21,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Connectors.GitHubIssues.xml</DocumentationFile>
+    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Connectors.FileBased.xml</DocumentationFile>
     <OutputPath>..\..\dist\bin-net8.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
@@ -30,19 +30,21 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\dist\bin-net8.0\</OutputPath>
-    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Connectors.GitHubIssues.xml</DocumentationFile>
+    <DocumentationFile>..\..\dist\bin-net8.0\UniversalWorkItem.Connectors.FileBased.xml</DocumentationFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;NET5</DefineConstants>
   </PropertyGroup>
 
-  <Import Project="..\UniversalWorkItem.Connectors.GitHubIssues\UniversalWorkItem.Connectors.GitHubIssues.projitems" Label="Shared" />
+  <Import Project="..\UniversalWorkItem.Connectors.FileBased\UniversalWorkItem.Connectors.FileBased.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="FUSE-fx.DynDB-JSONfs" Version="0.1.2" />
     <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.2" />
     <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.16" />
     <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.8" />
     <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.3" />
+    <PackageReference Include="KornSW.AbstractFileSystem.RepositoryContract" Version="2.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.2" />
   </ItemGroup>

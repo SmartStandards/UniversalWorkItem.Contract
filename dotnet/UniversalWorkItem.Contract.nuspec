@@ -17,7 +17,7 @@
     <dependencies>
       <group targetFramework=".NETFramework4.8">
         <dependency id="FUSE-fx.EntityAnnotations" version="4.1.1" />
-        <!--<dependency id="FUSE-fx.RepositoryContract" version="0.5.2" /> GRAD KAPUTT-->
+        <dependency id="FUSE-fx.RepositoryContract" version="0.5.2" />
         <dependency id="Newtonsoft.Json" version="13.0.3" />
       </group>
       <group targetFramework="net6.0">

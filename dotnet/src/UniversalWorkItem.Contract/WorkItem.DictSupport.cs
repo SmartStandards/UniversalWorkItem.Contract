@@ -31,10 +31,10 @@ namespace Collaboration.WorkTracking {
     /// <returns></returns>
     public object this[string fieldName] {
       get {
-        return this.GetValue<object>(fieldName, null);
+        return this.GetCustomField<object>(fieldName, null);
       }
       set {
-        this.SetValue(fieldName, value);
+        this.SetCustomField(fieldName, value);
       }
     }
 
@@ -47,7 +47,7 @@ namespace Collaboration.WorkTracking {
     /// But in special cases other (json compatible) target types can be used:
     /// (LONG)-INT | STRING ARRAY | INT ARRAY
     /// </param>
-    public void SetValue<TValue>(string fieldName, TValue value, Func<TValue, object> customSerializer = null) {
+    public void SetCustomField<TValue>(string fieldName, TValue value, Func<TValue, object> customSerializer = null) {
 
       PropertyInfo explicitProp = this.ExplicitProperties.Where((p) => p.Name.Equals(fieldName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
       if (explicitProp != null) {
@@ -211,7 +211,7 @@ namespace Collaboration.WorkTracking {
     //}
 
 
-    public TValue GetValue<TValue>(string fieldName, TValue defaultValue) {
+    public TValue GetCustomField<TValue>(string fieldName, TValue defaultValue) {
 
       PropertyInfo explicitProp = this.ExplicitProperties.Where((p) => p.Name.Equals(fieldName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
       if (explicitProp != null) {

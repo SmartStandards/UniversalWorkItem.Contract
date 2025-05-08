@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NET5_0_OR_GREATER
 using System.Data.Fuse;
-#endif
 
 namespace Collaboration.WorkTracking.Connectors.GitHubIssues {
-
-#if NET5_0_OR_GREATER
 
   public class GitHubIssuesWorkItemRepository : IWorkItemRepository {
 
@@ -115,7 +111,5 @@ namespace Collaboration.WorkTracking.Connectors.GitHubIssues {
       throw new NotImplementedException();
     }
   }
-
-#endif
 
 }
