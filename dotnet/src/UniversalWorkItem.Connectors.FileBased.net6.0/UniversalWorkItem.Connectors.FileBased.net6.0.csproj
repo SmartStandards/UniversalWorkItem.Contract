@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>UniversalWorkItem.Connectors.GitHubIssues</AssemblyName>
+    <AssemblyName>UniversalWorkItem.Connectors.FileBased</AssemblyName>
     <RootNamespace></RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
