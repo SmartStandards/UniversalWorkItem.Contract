@@ -35,7 +35,7 @@
         <dependency id="KornSW.AbstractFileSystem.RepositoryContract" version="2.1.3" />
         <dependency id="FUSE-fx.DynDB-JSONfs" version="0.1.2" />
       </group>
-      <!-- <group targetFramework="net8.0">
+      <group targetFramework="net8.0">
         <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
         <dependency id="FUSE-fx.EntityAnnotations" version="4.1.2" />
         <dependency id="FUSE-fx.ModelDescription" version="2.0.16" />
@@ -44,7 +44,7 @@
         <dependency id="Newtonsoft.Json" version="13.0.3" />
         <dependency id="KornSW.AbstractFileSystem.RepositoryContract" version="2.1.3" />
         <dependency id="FUSE-fx.DynDB-JSONfs" version="0.1.2" />
-      </group>-->
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -59,8 +59,8 @@
     <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.FileBased.xml" target="lib/net6.0" />
     <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.FileBased.pdb" target="lib/net6.0" />
     <!-- .NET 8.0 -->
-    <!-- <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.FileBased.dll" target="lib/net8.0" />
+    <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.FileBased.dll" target="lib/net8.0" />
     <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.FileBased.xml" target="lib/net8.0" />
-    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.FileBased.pdb" target="lib/net8.0" />-->
+    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.FileBased.pdb" target="lib/net8.0" />
   </files>
 </package>

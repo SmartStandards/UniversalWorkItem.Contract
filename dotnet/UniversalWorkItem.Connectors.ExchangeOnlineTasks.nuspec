@@ -31,14 +31,14 @@
         <dependency id="FUSE-fx.RepositoryContract" version="0.5.3" />
         <dependency id="Newtonsoft.Json" version="13.0.3" />   
       </group>
-      <!-- <group targetFramework="net8.0">
+      <group targetFramework="net8.0">
         <dependency id="UniversalWorkItem.Contract" version="999.0.0-localbuild" />
         <dependency id="FUSE-fx.EntityAnnotations" version="4.1.2" />
         <dependency id="FUSE-fx.ModelDescription" version="2.0.16" />
         <dependency id="FUSE-fx.ModelReader" version="0.2.8" />
         <dependency id="FUSE-fx.RepositoryContract" version="0.5.3" />
         <dependency id="Newtonsoft.Json" version="13.0.3" />
-      </group>-->
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -53,8 +53,8 @@
     <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml" target="lib/net6.0" />
     <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.pdb" target="lib/net6.0" />
     <!-- .NET 8.0 -->
-    <!-- <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.dll" target="lib/net8.0" />
+    <file src="dist\bin-net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.dll" target="lib/net8.0" />
     <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.xml" target="lib/net8.0" />
-    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.pdb" target="lib/net8.0" />-->
+    <file src="dist\bin-net8.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.pdb" target="lib/net8.0" />
   </files>
 </package>
