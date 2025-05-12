@@ -1,13 +1,13 @@
 {
-  "currentVersion": "0.1.0",
-  "currentVersionWithSuffix": "0.1.0",
+  "currentVersion": "0.1.2",
+  "currentVersionWithSuffix": "0.1.2",
   "releaseType": "",
-  "previousVersion": "0.0.0",
+  "previousVersion": "0.1.1",
   "changeGrade": "fix",
   "currentMajor": 0,
   "currentMinor": 1,
-  "currentPatch": 0,
-  "versionDateInfo": "2025-05-02",
-  "versionTimeInfo": "13:21:41",
-  "versionNotes": "- initial commit (moved from PoC-Repo)\n"
+  "currentPatch": 2,
+  "versionDateInfo": "2025-05-12",
+  "versionTimeInfo": "13:43:20",
+  "versionNotes": "- Added empty body-projects for wanted connectors: AzureDevOps, ExchangeOnlineTasks, GitHubIssues, Trello\n"
 }

@@ -6,7 +6,13 @@
 
 ## Upcoming Changes
 
-* Added empty body-projects for wanted connectors: AzureDevOps, ExchangeOnlineTasks, GitHubIssues, Trello
+*(none)*
+
+
+
+## v 0.1.2
+released **2025-05-12**, including:
+ - Added empty body-projects for wanted connectors: AzureDevOps, ExchangeOnlineTasks, GitHubIssues, Trello
 
 
 
