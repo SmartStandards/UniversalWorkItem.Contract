@@ -10,7 +10,7 @@
 
 
 
-## v 0.1.0
+## v 0.1.1
 released **2025-05-02**, including:
  - initial commit (moved from PoC-Repo)
 

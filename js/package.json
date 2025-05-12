@@ -30,5 +30,8 @@
   },
   "files": [
     "lib/**/*"
-  ]
+  ],
+  "dependencies": {
+    "smartstandards-logging": "^2.4.5"
+  }
 }
