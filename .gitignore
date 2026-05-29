@@ -250,5 +250,5 @@ Lib_JS/lib/*
 /js/dist
 js/*.tgz
 .vscode/settings.json
-/dotnet/vendor/nuget
+/**/vendor/nuget
 /js/lib

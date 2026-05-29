@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <BaseOutputPath>..\..\dist\bin-net6.0</BaseOutputPath>
     <AssemblyName>WorkItemConnector</AssemblyName>
@@ -31,22 +31,22 @@
 
   <ItemGroup>
     <PackageReference Include="FUSE-fx.DynDB-JSONfs" Version="0.1.2" />
-    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.16" />
-    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.8" />
-    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.3" />
-    <PackageReference Include="FUSE-fx.WinForms" Version="0.1.2" />
-    <PackageReference Include="KornSW.AbstractFileSystem.RepositoryContract" Version="2.1.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.2" />
+    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.22" />
+    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.20" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="1.0.2" />
+    <PackageReference Include="FUSE-fx.WinForms" Version="0.2.0" />
+    <PackageReference Include="KornSW.AbstractFileSystem.RepositoryContract" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="SmartStandards.Logging" Version="3.4.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.AzureDevOps.net6.0\UniversalWorkItem.Connectors.AzureDevOps.net6.0.csproj" />
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net6.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net6.0.csproj" />
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.FileBased.net6.0\UniversalWorkItem.Connectors.FileBased.net6.0.csproj" />
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.GitHubIssues.net6.0\UniversalWorkItem.Connectors.GitHubIssues.net6.0.csproj" />
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.Trello.net6.0\UniversalWorkItem.Connectors.Trello.net6.0.csproj" />
-    <ProjectReference Include="..\..\src\UniversalWorkItem.Contract.net6.0\UniversalWorkItem.Contract.net6.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.AzureDevOps.net10.0\UniversalWorkItem.Connectors.AzureDevOps.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net10.0\UniversalWorkItem.Connectors.ExchangeOnlineTasks.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.FileBased.net10.0\UniversalWorkItem.Connectors.FileBased.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.GitHubIssues.net10.0\UniversalWorkItem.Connectors.GitHubIssues.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Connectors.Trello.net10.0\UniversalWorkItem.Connectors.Trello.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Contract.net10.0\UniversalWorkItem.Contract.net10.0.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,7 +65,7 @@
   </ItemGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;DEBUG;NET5</DefineConstants>
@@ -73,7 +73,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;DEBUG;NET5</DefineConstants>
@@ -81,7 +81,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;NET5</DefineConstants>
@@ -89,7 +89,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;NET5</DefineConstants>

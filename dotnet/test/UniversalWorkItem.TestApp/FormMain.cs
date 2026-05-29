@@ -1,8 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Collaboration.WorkTracking;
+using Collaboration.WorkTracking.Connectors.AzureDevOps;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Fuse;
+using System.Data.Fuse.Convenience;
+using System.Data.ModelDescription;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -36,6 +41,16 @@ namespace UniversalWorkItem.TestApp {
           return;
         string rawJson = System.IO.File.ReadAllText(fileFullName, System.Text.Encoding.UTF8);
         var fields = JsonConvert.DeserializeObject<Dictionary<string, object>>(rawJson);
+        object org;
+
+        fields.TryGetValue("AzureDevOps_Organization", out org);
+        _TxtOrg.Text = org as string ?? string.Empty;
+
+        fields.TryGetValue("AzureDevOps_PAT", out org);
+        _TxtPAT.Text = org as string ?? string.Empty;
+
+        fields.TryGetValue("AzureDevOps_TeamProject", out org);
+        _TxtTeamProject.Text = org as string ?? string.Empty;
 
         //txtAuthorizeUrl.Text = (string)fields["authorizeUrl"];
         //txtRedirectUrl.Text = (string)fields["redirectUrl"];
@@ -63,9 +78,9 @@ namespace UniversalWorkItem.TestApp {
         Func<string, string> encryptionMethod = (string plaintext) => { return Convert.ToBase64String((new UTF8Encoding()).GetBytes(plaintext)).ToCharArray().Select(x => String.Format("{0:X}", (int)x)).Aggregate(new StringBuilder(), (x, y) => x.Append(y)).ToString(); };
         var fields = new Dictionary<string, object>();
 
-        //fields["authorizeUrl"] = txtAuthorizeUrl.Text;
-        //fields["redirectUrl"] = txtRedirectUrl.Text;
-        //fields["grantType"] = txtGrantType.Text;
+        fields["AzureDevOps_Organization"] = _TxtOrg.Text;
+        fields["AzureDevOps_PAT"] = _TxtPAT.Text;
+        fields["AzureDevOps_TeamProject"] = _TxtTeamProject.Text;
         //fields["state"] = txtState.Text;
         //fields["scopeToRequest"] = txtScopeToRequest.Text;
         //fields["clientId"] = encryptionMethod.Invoke(txtClientId.Text);
@@ -92,20 +107,28 @@ namespace UniversalWorkItem.TestApp {
 
     #endregion
 
+    private SchemaRoot _SchemaRoot = null;
+    private IRepository<WorkItem, WorkItemIdentity> _Repository = null;
 
-    private void button1_Click_1(object sender, EventArgs e) {
+    private void BtnConnect_Click(object sender, EventArgs e) {
+      this.SaveFields();
 
+      _SchemaRoot = ModelReader.GetSchema(new Type[] { typeof(WorkItem) }, true);
 
+      _Repository = new AzureDevOpsWorkItemRepository(
+        originBaseUrl: _TxtOrg.Text,
+        personalAccessToken: _TxtPAT.Text,
+        storageArea: _TxtTeamProject.Text,
+        defaultWorkItemType: AzureDevOpsWorkItemRepository.KnownWorkItemTypes.Bug
+      );
 
+      _FuseTable.EntitySchema = _SchemaRoot.Entities.Where((e) => e.Name == nameof(WorkItem)).Single();
+      _FuseTable.ExpressionTree = new ExpressionTree();
+      _FuseTable.SortedBy = new string[] { nameof(WorkItem.ManualReorderedPriority), nameof(WorkItem.OriginRelatedId) };
+      _FuseTable.Skip = 0;
+      _FuseTable.Limit = 100;
 
-
-
-
-
-
-
-
-
+      _FuseTable.BindToRepository(_Repository);
 
     }
 

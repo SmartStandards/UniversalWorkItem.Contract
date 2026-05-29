@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 namespace Collaboration.WorkTracking {
@@ -31,6 +32,8 @@ namespace Collaboration.WorkTracking {
   }
 
   [DebuggerDisplay("#{OriginRelatedId}: {Title}")]
+  [PrimaryIdentity("PK")]
+  [PropertyGroup("PK", nameof(WorkItemIdentity.Origin), nameof(WorkItemIdentity.OriginRelatedId))]
   public partial class WorkItem : WorkItemIdentity {
 
     #region " Workitem Type, Location & Order "

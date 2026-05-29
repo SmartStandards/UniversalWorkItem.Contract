@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>UniversalWorkItem.Connectors.AzureDevOps</AssemblyName>
     <RootNamespace></RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -21,16 +21,16 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\..\dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.xml</DocumentationFile>
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
+    <DocumentationFile>..\..\dist\bin-net10.0\UniversalWorkItem.Connectors.AzureDevOps.xml</DocumentationFile>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;DEBUG;NET5</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\dist\bin-net6.0\</OutputPath>
-    <DocumentationFile>..\..\dist\bin-net6.0\UniversalWorkItem.Connectors.AzureDevOps.xml</DocumentationFile>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
+    <DocumentationFile>..\..\dist\bin-net10.0\UniversalWorkItem.Connectors.AzureDevOps.xml</DocumentationFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>TRACE;NET5</DefineConstants>
@@ -43,16 +43,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.1.2" />
-    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.16" />
-    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.8" />
-    <PackageReference Include="FUSE-fx.RepositoryContract" Version="0.5.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.2" />
+    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.2.2" />
+    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.22" />
+    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.20" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="1.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="SmartStandards.Logging" Version="3.4.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UniversalWorkItem.Contract.net6.0\UniversalWorkItem.Contract.net6.0.csproj" />
+    <ProjectReference Include="..\UniversalWorkItem.Contract.net10.0\UniversalWorkItem.Contract.net10.0.csproj" />
   </ItemGroup>
 
   <Import Project="..\UniversalWorkItem.Connectors.AzureDevOps\UniversalWorkItem.Connectors.AzureDevOps.projitems" Label="Shared" />
