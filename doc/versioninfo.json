@@ -1,13 +1,13 @@
 {
-  "currentVersion": "0.1.2",
-  "currentVersionWithSuffix": "0.1.2",
+  "currentVersion": "0.2.0",
+  "currentVersionWithSuffix": "0.2.0",
   "releaseType": "",
-  "previousVersion": "0.1.1",
-  "changeGrade": "fix",
+  "previousVersion": "0.1.2",
+  "changeGrade": "minor",
   "currentMajor": 0,
-  "currentMinor": 1,
-  "currentPatch": 2,
-  "versionDateInfo": "2025-05-12",
-  "versionTimeInfo": "13:43:20",
-  "versionNotes": "- Added empty body-projects for wanted connectors: AzureDevOps, ExchangeOnlineTasks, GitHubIssues, Trello\n"
+  "currentMinor": 2,
+  "currentPatch": 0,
+  "versionDateInfo": "2026-05-29",
+  "versionTimeInfo": "08:39:58",
+  "versionNotes": "- new Feature: Moved targets from .net 6/8 to 8/10\n"
 }

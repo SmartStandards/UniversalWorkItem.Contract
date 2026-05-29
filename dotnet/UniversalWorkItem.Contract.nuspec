@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>UniversalWorkItem.Contract</id>
-    <version>0.0.1-localbuild</version>
+    <version>0.2.0</version>
     <title>UniversalWorkItem.Contract</title>
     <authors>SmartStandards</authors>
     <owners>(public domain)</owners>
