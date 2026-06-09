@@ -10,6 +10,12 @@
 
 
 
+## v 0.2.1
+released **2026-06-09**, including:
+ - New revision without significant changes
+
+
+
 ## v 0.2.0
 released **2026-05-29**, including:
  - **new Feature**: Moved targets from .net 6/8 to 8/10
