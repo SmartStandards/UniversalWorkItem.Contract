@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
@@ -112,10 +113,10 @@ namespace Collaboration.WorkTracking {
     #region " Timestamps and Authors "
 
     /// <summary>
-    /// The Date/Time when a user created the worktiem as utc UNIX-TIMESTAMP!
+    /// The Date/Time when a user created the worktiem
     /// (independend from any technical sync-operations)
     /// </summary>
-    public long CreatedTimestamp { get; set; } = 0;
+    public DateTime? CreatedTimestamp { get; set; } = null;
 
     /// <summary>
     /// The User whichs interaction created the workitem
@@ -126,10 +127,10 @@ namespace Collaboration.WorkTracking {
     public string CreatedBy { get; set; } = "Unknown";
 
     /// <summary>
-    /// The Date/Time when a user modified the workitem as utc UNIX-TIMESTAMP!
+    /// The Date/Time when a user modified the workitem
     /// (independend from any technical sync-operations).
     /// </summary>
-    public long ModifiedTimestamp { get; set; } = 0;
+    public DateTime? ModifiedTimestamp { get; set; } = null;
 
     /// <summary>
     /// The User whichs interaction changed the Last-Modified Date/Time
@@ -140,12 +141,12 @@ namespace Collaboration.WorkTracking {
     public string ModifiedBy { get; set; } = "Unknown";
 
     /// <summary>
-    /// The Date/Time when a user marked the workitem for deletion as utc UNIX-TIMESTAMP!
+    /// The Date/Time when a user marked the workitem for deletion
     /// (independend from any technical sync-operations).
     /// The default value 0 is a magic-value, representing the semantic, 
     /// that the workitem is NOT YET marked for deletion
     /// </summary>
-    public long DeletedTimestamp { get; set; } = 0;
+    public DateTime? DeletedTimestamp { get; set; } = null;
 
     /// <summary>
     /// The User whichs interaction marked the workitem for deletion
@@ -178,9 +179,9 @@ namespace Collaboration.WorkTracking {
     public string ProgressState { get; set; } = "New";
 
     /// <summary>
-    /// The Date/Time when the ProgressState moved to its current value as utc UNIX-TIMESTAMP!
+    /// The Date/Time when the ProgressState moved to its current value
     /// </summary>
-    public long ProgressStateTimestamp { get; set; } = 0;
+    public DateTime? ProgressStateTimestamp { get; set; } = null;
 
     /// <summary>
     /// OPTIONAL: a quick note related to the current ProgressState.
@@ -208,14 +209,14 @@ namespace Collaboration.WorkTracking {
 
     /// <summary>
     /// The Date/Time of the first transition to a 'Working'-State
-    /// (can also be a planned future-date) as utc UNIX-TIMESTAMP!
+    /// (can also be a planned future-date)!
     /// </summary>
-    public long StartTimestamp { get; set; } = 0;
+    public DateTime? StartTimestamp { get; set; } = null;
 
     /// <summary>
-    /// The estimated Date/Time when a 'Done'-State should be reached as utc UNIX-TIMESTAMP!
+    /// The estimated Date/Time when a 'Done'-State should be reached
     /// </summary>
-    public long DeadlineTimestamp { get; set; } = 0;
+    public DateTime? DeadlineTimestamp { get; set; } = null;
 
     #endregion
 
@@ -230,7 +231,7 @@ namespace Collaboration.WorkTracking {
     }
 
   }
-  
+
   public class LinkedItem  {
 
     /// <summary>

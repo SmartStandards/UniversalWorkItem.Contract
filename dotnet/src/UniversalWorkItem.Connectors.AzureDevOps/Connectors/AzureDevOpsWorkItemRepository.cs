@@ -30,6 +30,27 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     private readonly string _Project;
     private readonly string _DefaultWorkItemType;
     private readonly AzureDevOpsClient _Client;
+    private readonly object _AdoFieldDefinitionsSync = new object();
+    private Dictionary<string, AdoFieldDefinition> _AdoFieldDefinitions = null;
+
+    private const string _AzureDevOpsClassPrefix = "AzureDevOps.";
+    private const string _AdoFieldId = "System.Id";
+    private const string _AdoFieldTitle = "System.Title";
+    private const string _AdoFieldWorkItemType = "System.WorkItemType";
+    private const string _AdoFieldState = "System.State";
+    private const string _AdoFieldTeamProject = "System.TeamProject";
+    private const string _AdoFieldAreaPath = "System.AreaPath";
+    private const string _AdoFieldIterationPath = "System.IterationPath";
+    private const string _AdoFieldDescription = "System.Description";
+    private const string _AdoFieldTags = "System.Tags";
+    private const string _AdoFieldAssignedTo = "System.AssignedTo";
+    private const string _AdoFieldCreatedDate = "System.CreatedDate";
+    private const string _AdoFieldChangedDate = "System.ChangedDate";
+    private const string _AdoFieldCreatedBy = "System.CreatedBy";
+    private const string _AdoFieldChangedBy = "System.ChangedBy";
+    private const string _AdoFieldStackRank = "Microsoft.VSTS.Common.StackRank";
+    private const string _AdoFieldRemainingWork = "Microsoft.VSTS.Scheduling.RemainingWork";
+    private const string _AdoFieldCompletedWork = "Microsoft.VSTS.Scheduling.CompletedWork";
 
     private static readonly Dictionary<string, string> _StateMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
       { "New", "New" },
@@ -37,6 +58,36 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
       { "Suspended", "Removed" },
       { "Done", "Closed" },
       { "Discontinued", "Removed" }
+    };
+
+    private static readonly HashSet<string> _MappedAdoFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+      _AdoFieldId,
+      _AdoFieldTitle,
+      _AdoFieldWorkItemType,
+      _AdoFieldState,
+      _AdoFieldTeamProject,
+      _AdoFieldAreaPath,
+      _AdoFieldDescription,
+      _AdoFieldTags,
+      _AdoFieldAssignedTo,
+      _AdoFieldCreatedDate,
+      _AdoFieldChangedDate,
+      _AdoFieldCreatedBy,
+      _AdoFieldChangedBy,
+      _AdoFieldStackRank,
+      _AdoFieldRemainingWork,
+      _AdoFieldCompletedWork
+    };
+
+    private static readonly HashSet<string> _WritableSystemAdoFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+      _AdoFieldTitle,
+      _AdoFieldWorkItemType,
+      _AdoFieldState,
+      _AdoFieldAreaPath,
+      _AdoFieldIterationPath,
+      _AdoFieldDescription,
+      _AdoFieldTags,
+      _AdoFieldAssignedTo
     };
 
     /// <summary>
@@ -167,19 +218,11 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     /// Translates known sort aliases to ADO fields.
     /// </summary>
     private static string ConvertSortFieldToAdoField(string field) {
-      if (string.Equals(field, nameof(WorkItem.CreatedTimestamp), StringComparison.OrdinalIgnoreCase)) {
-        return "System.CreatedDate";
+      string adoField = MapFieldNameToAdoField(field);
+      if (!string.IsNullOrWhiteSpace(adoField)) {
+        return adoField;
       }
-      if (string.Equals(field, nameof(WorkItem.ModifiedTimestamp), StringComparison.OrdinalIgnoreCase)) {
-        return "System.ChangedDate";
-      }
-      if (string.Equals(field, nameof(WorkItem.Title), StringComparison.OrdinalIgnoreCase)) {
-        return "System.Title";
-      }
-      if (string.Equals(field, nameof(WorkItem.ProgressState), StringComparison.OrdinalIgnoreCase)) {
-        return "System.State";
-      }
-      return "System.ChangedDate";
+      return _AdoFieldChangedDate;
     }
 
     /// <summary>
@@ -237,19 +280,31 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     /// </summary>
     private static string MapFieldNameToAdoField(string field) {
       if (string.Equals(field, nameof(WorkItem.Title), StringComparison.OrdinalIgnoreCase)) {
-        return "System.Title";
+        return _AdoFieldTitle;
+      }
+      if (string.Equals(field, nameof(WorkItem.BodyContent), StringComparison.OrdinalIgnoreCase)) {
+        return _AdoFieldDescription;
       }
       if (string.Equals(field, nameof(WorkItem.ProgressState), StringComparison.OrdinalIgnoreCase)) {
-        return "System.State";
+        return _AdoFieldState;
       }
       if (string.Equals(field, nameof(WorkItem.AssignedTo), StringComparison.OrdinalIgnoreCase)) {
-        return "System.AssignedTo";
+        return _AdoFieldAssignedTo;
+      }
+      if (string.Equals(field, nameof(WorkItem.ConcernArea), StringComparison.OrdinalIgnoreCase)) {
+        return _AdoFieldAreaPath;
+      }
+      if (string.Equals(field, nameof(WorkItem.Tags), StringComparison.OrdinalIgnoreCase)) {
+        return _AdoFieldTags;
       }
       if (string.Equals(field, nameof(WorkItem.CreatedTimestamp), StringComparison.OrdinalIgnoreCase)) {
-        return "System.CreatedDate";
+        return _AdoFieldCreatedDate;
       }
       if (string.Equals(field, nameof(WorkItem.ModifiedTimestamp), StringComparison.OrdinalIgnoreCase)) {
-        return "System.ChangedDate";
+        return _AdoFieldChangedDate;
+      }
+      if (IsSafeAdoReferenceName(field)) {
+        return field;
       }
       return null;
     }
@@ -270,8 +325,12 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
 
       if (value is DateTime) {
         DateTime dt = (DateTime)value;
-        string iso = dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
-        return "'" + iso + "'";
+        return "'" + FormatDateTimeForWiql(dt) + "'";
+      }
+
+      if (value is DateTimeOffset) {
+        DateTimeOffset dt = (DateTimeOffset)value;
+        return "'" + FormatDateTimeForWiql(dt.UtcDateTime) + "'";
       }
 
       if (value is long || value is int || value is double || value is decimal) {
@@ -279,6 +338,20 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
       }
 
       return "'" + value.ToString().Replace("'", "''") + "'";
+    }
+
+    /// <summary>
+    /// Formats a DateTime value for WIQL date comparisons.
+    /// </summary>
+    private static string FormatDateTimeForWiql(DateTime value) {
+      DateTime normalized;
+      if (value.Kind == DateTimeKind.Unspecified) {
+        normalized = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+      }
+      else {
+        normalized = value.ToUniversalTime();
+      }
+      return normalized.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -377,30 +450,10 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
         return new WorkItem[0];
       }
 
-      string idsParam = string.Join(",", ids.Select(i => i.ToString(CultureInfo.InvariantCulture)).ToArray());
-      string fieldsParam = string.Join(",", new string[]
-      {
-                "System.Id",
-                "System.Title",
-                "System.State",
-                "System.TeamProject",
-                "System.Description",
-                "System.Tags",
-                "System.AssignedTo",
-                "System.CreatedDate",
-                "System.ChangedDate",
-                "System.CreatedBy",
-                "System.ChangedBy",
-                "Microsoft.VSTS.Common.StackRank",
-                "Microsoft.VSTS.Scheduling.RemainingWork",
-                "Microsoft.VSTS.Scheduling.CompletedWork"
-      });
-
       string url = _Client.BuildOrgApiUrl("wit/workitemsbatch?api-version=7.1-preview.1");
       JObject body = new JObject {
         ["ids"] = new JArray(ids),
-        ["$expand"] = "Relations",
-        ["fields"] = new JArray(fieldsParam.Split(','))
+        ["$expand"] = "Relations"
       };
 
       JObject result = _Client.PostJson(url, body);
@@ -654,14 +707,124 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     // ------------------------------------------------------------
 
     /// <summary>
+    /// Determines whether the ADO field is already mapped to a typed WorkItem property.
+    /// </summary>
+    private static bool IsMappedAdoField(string fieldReferenceName) {
+      if (string.IsNullOrWhiteSpace(fieldReferenceName)) {
+        return false;
+      }
+      return _MappedAdoFields.Contains(fieldReferenceName);
+    }
+
+    /// <summary>
+    /// Determines whether a field name is a safe Azure DevOps reference name.
+    /// </summary>
+    private static bool IsSafeAdoReferenceName(string fieldReferenceName) {
+      if (string.IsNullOrWhiteSpace(fieldReferenceName)) {
+        return false;
+      }
+
+      bool hasDot = false;
+      for (int i = 0; i < fieldReferenceName.Length; i++) {
+        char c = fieldReferenceName[i];
+        if (c == '.') {
+          hasDot = true;
+          continue;
+        }
+        if (c == '_') {
+          continue;
+        }
+        if (char.IsLetterOrDigit(c)) {
+          continue;
+        }
+        return false;
+      }
+      return hasDot;
+    }
+
+    /// <summary>
+    /// Determines whether an additional ADO field may be patched back to Azure DevOps.
+    /// </summary>
+    private bool IsWritableAdditionalAdoField(string fieldReferenceName) {
+      if (!IsSafeAdoReferenceName(fieldReferenceName)) {
+        return false;
+      }
+      if (IsMappedAdoField(fieldReferenceName)) {
+        return false;
+      }
+
+      Dictionary<string, AdoFieldDefinition> definitions = this.GetAdoFieldDefinitions();
+      AdoFieldDefinition definition;
+      if (definitions.TryGetValue(fieldReferenceName, out definition)) {
+        return !definition.IsReadOnly;
+      }
+
+      if (fieldReferenceName.StartsWith("System.", StringComparison.OrdinalIgnoreCase)) {
+        return _WritableSystemAdoFields.Contains(fieldReferenceName);
+      }
+
+      return true;
+    }
+
+    /// <summary>
+    /// Returns cached Azure DevOps field definitions for writeability checks.
+    /// </summary>
+    private Dictionary<string, AdoFieldDefinition> GetAdoFieldDefinitions() {
+      if (_AdoFieldDefinitions != null) {
+        return _AdoFieldDefinitions;
+      }
+
+      lock (_AdoFieldDefinitionsSync) {
+        if (_AdoFieldDefinitions == null) {
+          _AdoFieldDefinitions = LoadAdoFieldDefinitions();
+        }
+        return _AdoFieldDefinitions;
+      }
+    }
+
+    /// <summary>
+    /// Loads Azure DevOps field definitions from the project collection.
+    /// </summary>
+    private Dictionary<string, AdoFieldDefinition> LoadAdoFieldDefinitions() {
+      Dictionary<string, AdoFieldDefinition> definitions = new Dictionary<string, AdoFieldDefinition>(StringComparer.OrdinalIgnoreCase);
+      try {
+        string url = _Client.BuildOrgApiUrl("wit/fields?api-version=7.1-preview.3");
+        JObject response = _Client.GetJson(url);
+        JArray values = response["value"] as JArray;
+        if (values == null) {
+          return definitions;
+        }
+
+        foreach (JObject field in values.OfType<JObject>()) {
+          string referenceName = (string)field["referenceName"];
+          if (string.IsNullOrWhiteSpace(referenceName)) {
+            continue;
+          }
+
+          bool isReadOnly = false;
+          JToken readOnlyToken = field["readOnly"];
+          if (readOnlyToken != null && readOnlyToken.Type != JTokenType.Null) {
+            isReadOnly = readOnlyToken.ToObject<bool>();
+          }
+
+          definitions[referenceName] = new AdoFieldDefinition(referenceName, (string)field["type"], isReadOnly);
+        }
+      }
+      catch (Exception ex) {
+        DevLogger.LogTrace(0, 99999, "Could not load Azure DevOps field definitions. Falling back to reference-name based write checks: " + ex.Message);
+      }
+      return definitions;
+    }
+
+    /// <summary>
     /// Creates a new Work Item and returns the new numeric id as string.
     /// </summary>
     private string CreateWorkItem(WorkItem entity) {
       string workItemType = _DefaultWorkItemType;
       if (!string.IsNullOrWhiteSpace(entity.Class)) {
         // Allow Class like "AzureDevOps.Bug" to select type
-        if (entity.Class.StartsWith("AzureDevOps.", StringComparison.OrdinalIgnoreCase)) {
-          workItemType = entity.Class.Substring("AzureDevOps.".Length);
+        if (entity.Class.StartsWith(_AzureDevOpsClassPrefix, StringComparison.OrdinalIgnoreCase)) {
+          workItemType = entity.Class.Substring(_AzureDevOpsClassPrefix.Length);
         }
       }
 
@@ -687,37 +850,44 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     private JArray BuildPatchForEntity(WorkItem entity, bool isUpdate) {
       List<JObject> ops = new List<JObject>();
 
-      AddPatch(ops, "add", "/fields/System.Title", entity.Title);
+      AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldTitle), entity.Title);
       if (!string.IsNullOrWhiteSpace(entity.BodyContent)) {
-        AddPatch(ops, "add", "/fields/System.Description", entity.BodyContent);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldDescription), entity.BodyContent);
       }
 
       if (entity.Tags != null && entity.Tags.Length > 0) {
         string tags = string.Join(";", entity.Tags);
-        AddPatch(ops, "add", "/fields/System.Tags", tags);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldTags), tags);
       }
 
       if (!string.IsNullOrWhiteSpace(entity.AssignedTo)) {
-        AddPatch(ops, "add", "/fields/System.AssignedTo", entity.AssignedTo);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldAssignedTo), entity.AssignedTo);
       }
 
       if (!string.IsNullOrWhiteSpace(entity.ProgressState)) {
         string state = ConvertModelStateToAdo(entity.ProgressState);
-        AddPatch(ops, "add", "/fields/System.State", state);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldState), state);
+      }
+
+      if (!string.IsNullOrWhiteSpace(entity.ConcernArea) && !string.Equals(entity.ConcernArea, "/", StringComparison.Ordinal)) {
+        string adoAreaPath = ConvertUniversalPathToAdoPath(entity.ConcernArea, _Project);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldAreaPath), adoAreaPath);
       }
 
       if (entity.ManualReorderedPriority > 0) {
         double d = Convert.ToDouble(entity.ManualReorderedPriority, CultureInfo.InvariantCulture);
-        AddPatch(ops, "add", "/fields/Microsoft.VSTS.Common.StackRank", d);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldStackRank), d);
       }
 
       if (entity.EstimatedEffort > 0) {
-        AddPatch(ops, "add", "/fields/Microsoft.VSTS.Scheduling.RemainingWork", entity.EstimatedEffort);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldRemainingWork), entity.EstimatedEffort);
       }
 
       if (entity.ProgressEffort > 0) {
-        AddPatch(ops, "add", "/fields/Microsoft.VSTS.Scheduling.CompletedWork", entity.ProgressEffort);
+        AddPatch(ops, "add", "/fields/" + EscapeJsonPointerSegment(_AdoFieldCompletedWork), entity.ProgressEffort);
       }
+
+      this.AddAdditionalFieldPatchOperations(ops, entity);
 
       // Relations (Parent/Child/Related/Hyperlink/Attachment)
       if (entity.LinkedItems != null && entity.LinkedItems.Length > 0) {
@@ -745,9 +915,37 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
       JObject o = new JObject {
         ["op"] = op,
         ["path"] = path,
-        ["value"] = JToken.FromObject(value)
+        ["value"] = value == null ? JValue.CreateNull() : JToken.FromObject(value)
       };
       ops.Add(o);
+    }
+
+    /// <summary>
+    /// Adds patch operations for dynamic ADO fields stored in AdditionalFields.
+    /// </summary>
+    private void AddAdditionalFieldPatchOperations(List<JObject> ops, WorkItem entity) {
+      if (entity == null || entity.AdditionalFields == null) {
+        return;
+      }
+
+      foreach (KeyValuePair<string, object> field in entity.AdditionalFields) {
+        if (!this.IsWritableAdditionalAdoField(field.Key)) {
+          continue;
+        }
+
+        string path = "/fields/" + EscapeJsonPointerSegment(field.Key);
+        AddPatch(ops, "add", path, field.Value);
+      }
+    }
+
+    /// <summary>
+    /// Escapes one JSON pointer path segment.
+    /// </summary>
+    private static string EscapeJsonPointerSegment(string segment) {
+      if (segment == null) {
+        return "";
+      }
+      return segment.Replace("~", "~0").Replace("/", "~1");
     }
 
     /// <summary>
@@ -828,19 +1026,33 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     /// Converts an ADO work item JSON to our model.
     /// </summary>
     private WorkItem FromAdoWorkItem(JObject wi) {
-      JObject fields = (JObject)wi["fields"];
+      JObject fields = wi["fields"] as JObject;
+      if (fields == null) {
+        fields = new JObject();
+      }
 
       WorkItem e = new WorkItem();
       e.Origin = _Origin;
       e.StorageArea = "/" + _Project + "/";
       e.OriginRelatedId = ((int)wi["id"]).ToString(CultureInfo.InvariantCulture);
 
-      e.Title = GetField<string>(fields, "System.Title", "Untitled");
-      e.ProgressState = GetField<string>(fields, "System.State", "New");
-      e.BodyContent = GetField<string>(fields, "System.Description", "Untitled");
+      string workItemType = GetField<string>(fields, _AdoFieldWorkItemType, "");
+      if (!string.IsNullOrWhiteSpace(workItemType)) {
+        e.Class = _AzureDevOpsClassPrefix + workItemType;
+      }
+
+      string teamProject = GetField<string>(fields, _AdoFieldTeamProject, _Project);
+      if (!string.IsNullOrWhiteSpace(teamProject)) {
+        e.StorageArea = "/" + teamProject + "/";
+      }
+
+      e.ConcernArea = ConvertAdoPathToUniversalPath(GetField<string>(fields, _AdoFieldAreaPath, ""), teamProject);
+      e.Title = GetField<string>(fields, _AdoFieldTitle, "Untitled");
+      e.ProgressState = GetField<string>(fields, _AdoFieldState, "New");
+      e.BodyContent = GetField<string>(fields, _AdoFieldDescription, "Untitled");
       e.BodyContentMimetype = "text/html";
 
-      string tags = GetField<string>(fields, "System.Tags", "");
+      string tags = GetField<string>(fields, _AdoFieldTags, "");
       if (string.IsNullOrWhiteSpace(tags)) {
         e.Tags = new string[0];
       }
@@ -848,28 +1060,28 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
         e.Tags = tags.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
       }
 
-      string assignedTo = ExtractIdentityDisplay(fields, "System.AssignedTo");
+      string assignedTo = ExtractIdentityDisplay(fields, _AdoFieldAssignedTo);
       e.AssignedTo = assignedTo;
 
-      DateTime created = GetField<DateTime>(fields, "System.CreatedDate", DateTime.MinValue);
-      e.CreatedTimestamp = created == DateTime.MinValue ? 0 : ToUnix(created);
-      e.CreatedBy = ExtractIdentityDisplay(fields, "System.CreatedBy");
+      e.CreatedTimestamp = GetNullableDateTimeField(fields, _AdoFieldCreatedDate);
+      e.CreatedBy = ExtractIdentityDisplay(fields, _AdoFieldCreatedBy);
 
-      DateTime changed = GetField<DateTime>(fields, "System.ChangedDate", DateTime.MinValue);
-      e.ModifiedTimestamp = changed == DateTime.MinValue ? 0 : ToUnix(changed);
-      e.ModifiedBy = ExtractIdentityDisplay(fields, "System.ChangedBy");
+      e.ModifiedTimestamp = GetNullableDateTimeField(fields, _AdoFieldChangedDate);
+      e.ModifiedBy = ExtractIdentityDisplay(fields, _AdoFieldChangedBy);
 
-      double stack = GetField<double>(fields, "Microsoft.VSTS.Common.StackRank", 0);
+      double stack = GetField<double>(fields, _AdoFieldStackRank, 0);
       if (stack > 0) {
         long l = Convert.ToInt64(Math.Round(stack), CultureInfo.InvariantCulture);
         e.ManualReorderedPriority = l;
       }
 
-      int rem = (int)Math.Round(GetField<double>(fields, "Microsoft.VSTS.Scheduling.RemainingWork", 0.0), 0);
-      int comp = (int)Math.Round(GetField<double>(fields, "Microsoft.VSTS.Scheduling.CompletedWork", 0.0), 0);
+      int rem = (int)Math.Round(GetField<double>(fields, _AdoFieldRemainingWork, 0.0), 0);
+      int comp = (int)Math.Round(GetField<double>(fields, _AdoFieldCompletedWork, 0.0), 0);
       e.EstimatedEffort = rem;
       e.ProgressEffort = comp;
       e.EffortUnit = "hours";
+
+      StoreAdditionalAdoFields(e, fields);
 
       // Relations -> LinkedItems
       if (wi["relations"] is JArray rels && rels.Count > 0) {
@@ -892,10 +1104,74 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     }
 
     /// <summary>
+    /// Stores every non-universal ADO field as additional field under its ADO reference name.
+    /// </summary>
+    private static void StoreAdditionalAdoFields(WorkItem entity, JObject fields) {
+      if (entity == null || fields == null) {
+        return;
+      }
+
+      foreach (JProperty field in fields.Properties()) {
+        if (IsMappedAdoField(field.Name)) {
+          continue;
+        }
+        entity.SetField(field.Name, field.Value);
+      }
+    }
+
+    /// <summary>
+    /// Converts an Azure DevOps path to the slash-based universal path shape.
+    /// </summary>
+    private static string ConvertAdoPathToUniversalPath(string adoPath, string projectName) {
+      if (string.IsNullOrWhiteSpace(adoPath)) {
+        return "/";
+      }
+
+      string normalized = adoPath.Trim().Replace('\\', '/');
+      string project = string.IsNullOrWhiteSpace(projectName) ? "" : projectName.Trim().Replace('\\', '/');
+      if (!string.IsNullOrWhiteSpace(project)) {
+        if (string.Equals(normalized, project, StringComparison.OrdinalIgnoreCase)) {
+          normalized = "";
+        }
+        else if (normalized.StartsWith(project + "/", StringComparison.OrdinalIgnoreCase)) {
+          normalized = normalized.Substring(project.Length + 1);
+        }
+      }
+
+      normalized = normalized.Trim('/');
+      if (string.IsNullOrWhiteSpace(normalized)) {
+        return "/";
+      }
+      return "/" + normalized + "/";
+    }
+
+    /// <summary>
+    /// Converts a slash-based universal path to an Azure DevOps area path.
+    /// </summary>
+    private static string ConvertUniversalPathToAdoPath(string universalPath, string projectName) {
+      string project = string.IsNullOrWhiteSpace(projectName) ? "" : projectName.Trim().Trim('/').Replace('/', '\\');
+      string path = string.IsNullOrWhiteSpace(universalPath) ? "" : universalPath.Trim().Trim('/').Replace('/', '\\');
+
+      if (string.IsNullOrWhiteSpace(project)) {
+        return path;
+      }
+      if (string.IsNullOrWhiteSpace(path)) {
+        return project;
+      }
+      if (string.Equals(path, project, StringComparison.OrdinalIgnoreCase)) {
+        return project;
+      }
+      if (path.StartsWith(project + "\\", StringComparison.OrdinalIgnoreCase)) {
+        return path;
+      }
+      return project + "\\" + path;
+    }
+
+    /// <summary>
     /// Extracts a string display name from an ADO identity field.
     /// </summary>
     private static string ExtractIdentityDisplay(JObject fields, string name) {
-      if (fields[name] == null) {
+      if (fields == null || fields[name] == null) {
         return "";
       }
 
@@ -976,12 +1252,35 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     }
 
     /// <summary>
-    /// Converts DateTime (assumed UTC) to UNIX seconds.
+    /// Reads an Azure DevOps date field as nullable DateTime.
     /// </summary>
-    private static long ToUnix(DateTime dt) {
-      DateTime utc = dt.ToUniversalTime();
-      long unix = (long)(utc - new DateTime(1970, 1, 1)).TotalSeconds;
-      return unix;
+    private static DateTime? GetNullableDateTimeField(JObject fields, string name) {
+      if (fields == null || fields[name] == null || fields[name].Type == JTokenType.Null) {
+        return null;
+      }
+
+      try {
+        JToken token = fields[name];
+        if (token.Type == JTokenType.Date) {
+          return token.ToObject<DateTime>();
+        }
+
+        string text = token.ToString();
+        DateTime parsedDateTime;
+        if (DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out parsedDateTime)) {
+          return parsedDateTime;
+        }
+
+        DateTimeOffset parsedOffset;
+        if (DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out parsedOffset)) {
+          return parsedOffset.UtcDateTime;
+        }
+      }
+      catch {
+        return null;
+      }
+
+      return null;
     }
 
     /// <summary>
@@ -994,7 +1293,7 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
       }
 
       HashSet<string> set = new HashSet<string>(includedFieldNames, StringComparer.OrdinalIgnoreCase);
-      Dictionary<string, object> projected = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+      Dictionary<string, object> projected = new Dictionary<string, object>(StringComparer.Ordinal);
       foreach (KeyValuePair<string, object> kv in dict) {
         if (set.Contains(kv.Key)) {
           projected[kv.Key] = kv.Value;
@@ -1007,11 +1306,12 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     /// Converts entity to a simple dictionary (flat).
     /// </summary>
     private static Dictionary<string, object> EntityToDictionary(WorkItem e) {
-      Dictionary<string, object> d = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+      Dictionary<string, object> d = new Dictionary<string, object>(StringComparer.Ordinal);
       d[nameof(WorkItem.Origin)] = e.Origin;
       d[nameof(WorkItem.StorageArea)] = e.StorageArea;
       d[nameof(WorkItem.OriginRelatedId)] = e.OriginRelatedId;
       d[nameof(WorkItem.Class)] = e.Class;
+      d[nameof(WorkItem.ConcernArea)] = e.ConcernArea;
       d[nameof(WorkItem.Title)] = e.Title;
       d[nameof(WorkItem.BodyContent)] = e.BodyContent;
       d[nameof(WorkItem.BodyContentMimetype)] = e.BodyContentMimetype;
@@ -1026,6 +1326,11 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
       d[nameof(WorkItem.EstimatedEffort)] = e.EstimatedEffort;
       d[nameof(WorkItem.ProgressEffort)] = e.ProgressEffort;
       d[nameof(WorkItem.EffortUnit)] = e.EffortUnit;
+      if (e.AdditionalFields != null) {
+        foreach (KeyValuePair<string, object> field in e.AdditionalFields) {
+          d[field.Key] = field.Value;
+        }
+      }
       return d;
     }
 
@@ -1033,24 +1338,47 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     /// Builds an entity from a flat dictionary (subset).
     /// </summary>
     private static WorkItem DictionaryToEntity(Dictionary<string, object> dict) {
+      if (dict == null) {
+        throw new ArgumentNullException(nameof(dict));
+      }
+
       WorkItem e = new WorkItem();
       e.Origin = Read<string>(dict, nameof(WorkItem.Origin), "");
       e.StorageArea = Read<string>(dict, nameof(WorkItem.StorageArea), "/");
       e.OriginRelatedId = Read<string>(dict, nameof(WorkItem.OriginRelatedId), "");
-      e.Class = Read<string>(dict, nameof(WorkItem.Class), "Generic.WorkItem");
-      e.Title = Read<string>(dict, nameof(WorkItem.Title), "Untitled");
-      e.BodyContent = Read<string>(dict, nameof(WorkItem.BodyContent), "");
+      e.Class = ReadAny<string>(dict, "Generic.WorkItem", nameof(WorkItem.Class));
+      string adoWorkItemType = Read<string>(dict, _AdoFieldWorkItemType, "");
+      if (!string.IsNullOrWhiteSpace(adoWorkItemType)) {
+        e.Class = _AzureDevOpsClassPrefix + adoWorkItemType;
+      }
+      e.ConcernArea = ReadAny<string>(dict, "/", nameof(WorkItem.ConcernArea));
+      string adoAreaPath = Read<string>(dict, _AdoFieldAreaPath, "");
+      if (!string.IsNullOrWhiteSpace(adoAreaPath)) {
+        e.ConcernArea = ConvertAdoPathToUniversalPath(adoAreaPath, Read<string>(dict, _AdoFieldTeamProject, ""));
+      }
+      e.Title = ReadAny<string>(dict, "Untitled", nameof(WorkItem.Title), _AdoFieldTitle);
+      e.BodyContent = ReadAny<string>(dict, "", nameof(WorkItem.BodyContent), _AdoFieldDescription);
       e.BodyContentMimetype = Read<string>(dict, nameof(WorkItem.BodyContentMimetype), "text/plain");
-      e.AssignedTo = Read<string>(dict, nameof(WorkItem.AssignedTo), "");
-      e.ProgressState = Read<string>(dict, nameof(WorkItem.ProgressState), "New");
-      e.ManualReorderedPriority = Read<long>(dict, nameof(WorkItem.ManualReorderedPriority), 0);
-      e.EstimatedEffort = Read<int>(dict, nameof(WorkItem.EstimatedEffort), 0);
-      e.ProgressEffort = Read<int>(dict, nameof(WorkItem.ProgressEffort), 0);
+      e.AssignedTo = ReadAny<string>(dict, "", nameof(WorkItem.AssignedTo), _AdoFieldAssignedTo);
+      e.ProgressState = ReadAny<string>(dict, "New", nameof(WorkItem.ProgressState), _AdoFieldState);
+      e.CreatedTimestamp = ReadAnyNullableDateTime(dict, nameof(WorkItem.CreatedTimestamp), _AdoFieldCreatedDate);
+      e.CreatedBy = ReadAny<string>(dict, "Unknown", nameof(WorkItem.CreatedBy), _AdoFieldCreatedBy);
+      e.ModifiedTimestamp = ReadAnyNullableDateTime(dict, nameof(WorkItem.ModifiedTimestamp), _AdoFieldChangedDate);
+      e.ModifiedBy = ReadAny<string>(dict, "Unknown", nameof(WorkItem.ModifiedBy), _AdoFieldChangedBy);
+      e.ManualReorderedPriority = ReadAny<long>(dict, 0, nameof(WorkItem.ManualReorderedPriority), _AdoFieldStackRank);
+      e.EstimatedEffort = ReadAny<int>(dict, 0, nameof(WorkItem.EstimatedEffort), _AdoFieldRemainingWork);
+      e.ProgressEffort = ReadAny<int>(dict, 0, nameof(WorkItem.ProgressEffort), _AdoFieldCompletedWork);
       e.EffortUnit = Read<string>(dict, nameof(WorkItem.EffortUnit), "");
-      object tagsRaw;
-      if (dict.TryGetValue(nameof(WorkItem.Tags), out tagsRaw) && tagsRaw is IEnumerable<object>) {
-        IEnumerable<object> en = (IEnumerable<object>)tagsRaw;
-        e.Tags = en.Select(o => Convert.ToString(o, CultureInfo.InvariantCulture)).ToArray();
+      string[] tags = ReadTags(dict, nameof(WorkItem.Tags), _AdoFieldTags);
+      if (tags != null) {
+        e.Tags = tags;
+      }
+
+      foreach (KeyValuePair<string, object> field in dict) {
+        if (IsMappedAdoField(field.Key)) {
+          continue;
+        }
+        e.SetField(field.Key, field.Value);
       }
       return e;
     }
@@ -1089,6 +1417,121 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
     }
 
     /// <summary>
+    /// Reads the first present key from a dictionary.
+    /// </summary>
+    private static T ReadAny<T>(Dictionary<string, object> d, T def, params string[] keys) {
+      if (keys == null) {
+        return def;
+      }
+
+      foreach (string key in keys) {
+        object value;
+        if (d.TryGetValue(key, out value) && value != null) {
+          return Read<T>(d, key, def);
+        }
+      }
+      return def;
+    }
+
+    /// <summary>
+    /// Reads the first present date/time key from a dictionary.
+    /// </summary>
+    private static DateTime? ReadAnyNullableDateTime(Dictionary<string, object> d, params string[] keys) {
+      if (keys == null) {
+        return null;
+      }
+
+      foreach (string key in keys) {
+        object value;
+        if (d.TryGetValue(key, out value) && value != null) {
+          return ConvertToNullableDateTime(value);
+        }
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Converts a dictionary value to nullable DateTime.
+    /// </summary>
+    private static DateTime? ConvertToNullableDateTime(object value) {
+      if (value == null) {
+        return null;
+      }
+
+      if (value is DateTime) {
+        return (DateTime)value;
+      }
+      if (value is DateTimeOffset) {
+        DateTimeOffset offset = (DateTimeOffset)value;
+        return offset.UtcDateTime;
+      }
+
+      JToken token = value as JToken;
+      if (token != null) {
+        if (token.Type == JTokenType.Null) {
+          return null;
+        }
+        if (token.Type == JTokenType.Date) {
+          return token.ToObject<DateTime>();
+        }
+        value = token.ToString();
+      }
+
+      string text = Convert.ToString(value, CultureInfo.InvariantCulture);
+      if (string.IsNullOrWhiteSpace(text)) {
+        return null;
+      }
+
+      DateTime parsedDateTime;
+      if (DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out parsedDateTime)) {
+        return parsedDateTime;
+      }
+
+      DateTimeOffset parsedOffset;
+      if (DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out parsedOffset)) {
+        return parsedOffset.UtcDateTime;
+      }
+
+      return null;
+    }
+
+    /// <summary>
+    /// Reads tags from WorkItem shape or Azure DevOps semicolon-separated shape.
+    /// </summary>
+    private static string[] ReadTags(Dictionary<string, object> d, params string[] keys) {
+      if (keys == null) {
+        return null;
+      }
+
+      foreach (string key in keys) {
+        object value;
+        if (!d.TryGetValue(key, out value) || value == null) {
+          continue;
+        }
+
+        string text = value as string;
+        if (text != null) {
+          if (string.IsNullOrWhiteSpace(text)) {
+            return new string[0];
+          }
+          return text.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
+        }
+
+        string[] stringArray = value as string[];
+        if (stringArray != null) {
+          return stringArray;
+        }
+
+        IEnumerable<object> objectSequence = value as IEnumerable<object>;
+        if (objectSequence != null) {
+          return objectSequence.Select(o => Convert.ToString(o, CultureInfo.InvariantCulture)).ToArray();
+        }
+      }
+
+      return null;
+    }
+
+    /// <summary>
     /// Converts a WorkItem to an EntityRef.
     /// </summary>
     private static EntityRef<WorkItemIdentity> ToEntityRef(WorkItem e) {
@@ -1100,6 +1543,38 @@ namespace Collaboration.WorkTracking.Connectors.AzureDevOps {
         Label = e.Title
       };
       return r;
+    }
+
+    private sealed class AdoFieldDefinition {
+
+      private readonly string _ReferenceName;
+      private readonly string _Type;
+      private readonly bool _IsReadOnly;
+
+      public AdoFieldDefinition(string referenceName, string type, bool isReadOnly) {
+        _ReferenceName = referenceName;
+        _Type = type;
+        _IsReadOnly = isReadOnly;
+      }
+
+      public string ReferenceName {
+        get {
+          return _ReferenceName;
+        }
+      }
+
+      public string Type {
+        get {
+          return _Type;
+        }
+      }
+
+      public bool IsReadOnly {
+        get {
+          return _IsReadOnly;
+        }
+      }
+
     }
 
   }

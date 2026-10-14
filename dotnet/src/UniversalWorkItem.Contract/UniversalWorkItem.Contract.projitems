@@ -9,9 +9,13 @@
     <Import_RootNamespace>System</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)WorkItemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)[Helpers]\SmartExtensionBag.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorkItem.AdditionalFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IWorkItemRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorkItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WorkItem.DictSupport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)[Helpers]\SmartValueConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)[Helpers]\" />
   </ItemGroup>
 </Project>
