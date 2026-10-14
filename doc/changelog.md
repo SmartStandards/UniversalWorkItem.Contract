@@ -10,6 +10,13 @@
 
 
 
+## v 0.2.2
+released **2026-10-14**, including:
+ - Merge branch 'master' of https://github.com/SmartStandards/UniversalWorkItem.Contract
+ - Umbau auf AdditionalFields
+
+
+
 ## v 0.2.1
 released **2026-06-09**, including:
  - New revision without significant changes
