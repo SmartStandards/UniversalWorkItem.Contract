@@ -13,10 +13,10 @@
     <Product>UniversalWorkItem.Connectors.ExchangeOnlineTasks</Product>
     <Company>(public domain)</Company>
     <Copyright>SmartStandards</Copyright>
-    <Version>0.0.1</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Version>0.2.1</Version>
+    <AssemblyVersion>0.2.1</AssemblyVersion>
     <Authors>SmartStandards</Authors>
-    <FileVersion>1.0.0.0</FileVersion>
+    <FileVersion>0.2.1</FileVersion>
     <PackageTags></PackageTags>
   </PropertyGroup>
   
