@@ -10,9 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Connectors\GitHubIssuesClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Connectors\GitHubIssuesRepository.tmp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connectors\GitHubIssuesWorkItemRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Connectors\" />
+    <Content Include="$(MSBuildThisFileDirectory)Connectors\GitHubIssuesRepositoryImpl.cs.txt" />
   </ItemGroup>
 </Project>
