@@ -1,12 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Fuse;
 using System.Diagnostics;
 
 namespace Collaboration.WorkTracking {
 
   [DebuggerDisplay("#{OriginRelatedId}")]
-  public class WorkItemIdentity {
+  public class WorkItemIdentity : ICompositeKey, IEquatable<WorkItemIdentity> {
+
+    public WorkItemIdentity() {
+    }
+
+    /// <summary>
+    /// Creates a key from its field values (in the order of the primary key: 'Origin', 'OriginRelatedId').
+    /// NOTE: this constructor is also used by FUSE to materialize keys from key field values.
+    /// </summary>
+    public WorkItemIdentity(string origin, string originRelatedId) {
+      this.Origin = origin;
+      this.OriginRelatedId = originRelatedId;
+    }
 
     /// <summary>
     /// A concrete store id. Can also be the url of an online store like:
@@ -26,8 +39,70 @@ namespace Collaboration.WorkTracking {
       return new WorkItemIdentity { Origin = item.Origin, OriginRelatedId = item.OriginRelatedId };
     }
 
+    /// <summary>
+    /// Returns the key field values in the order of the primary key ('Origin', 'OriginRelatedId').
+    /// Required by FUSE to treat this type as composite key (instead of a single scalar key value).
+    /// </summary>
+    public object[] GetFields() {
+      return new object[] { this.Origin, this.OriginRelatedId };
+    }
+
+    /// <summary>
+    /// Compares the key field values (ordinal).
+    /// </summary>
+    public bool Equals(WorkItemIdentity other) {
+
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+
+      return (
+        string.Equals(this.Origin, other.Origin, StringComparison.Ordinal) &&
+        string.Equals(this.OriginRelatedId, other.OriginRelatedId, StringComparison.Ordinal)
+      );
+    }
+
+    /// <summary>
+    /// Compares the key field values with any other composite key having the same field layout.
+    /// </summary>
+    public bool Equals(ICompositeKey other) {
+
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+
+      object[] otherFields = other.GetFields();
+
+      if (otherFields == null || otherFields.Length != 2) {
+        return false;
+      }
+
+      return (
+        string.Equals(this.Origin, otherFields[0] as string, StringComparison.Ordinal) &&
+        string.Equals(this.OriginRelatedId, otherFields[1] as string, StringComparison.Ordinal)
+      );
+    }
+
+    /// <summary>
+    /// Compares the key field values.
+    /// </summary>
+    public override bool Equals(object obj) {
+
+      ICompositeKey otherKey = obj as ICompositeKey;
+
+      if (otherKey == null) {
+        return false;
+      }
+
+      return this.Equals(otherKey);
+    }
+
     public override int GetHashCode() {
       return $"{OriginRelatedId}@{Origin}".GetHashCode();
+    }
+
+    public override string ToString() {
+      return $"{OriginRelatedId}@{Origin}";
     }
 
   }

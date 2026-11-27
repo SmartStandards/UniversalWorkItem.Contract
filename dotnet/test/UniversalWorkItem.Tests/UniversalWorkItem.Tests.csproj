@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UniversalWorkItem.Contract.net10.0\UniversalWorkItem.Contract.net10.0.csproj" />
+    <ProjectReference Include="..\..\src\UniversalWorkItem.Boards\UniversalWorkItem.Boards.csproj" />
   </ItemGroup>
 
 </Project>

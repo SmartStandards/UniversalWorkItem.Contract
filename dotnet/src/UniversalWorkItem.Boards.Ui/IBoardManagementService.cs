@@ -21,6 +21,8 @@ namespace Collaboration.WorkTracking.Boards {
     private string _BoardId = string.Empty;
     private string _Title = string.Empty;
     private bool _IsReadOnly = false;
+    private BoardSource[] _Sources = new BoardSource[0];
+    private OriginTransition[] _AllowedOriginTransitions = new OriginTransition[0];
 
     /// <summary>
     /// Identifier of the board; used as last route segment of the board-specific WorkItem endpoint.
@@ -49,6 +51,30 @@ namespace Collaboration.WorkTracking.Boards {
       }
       set {
         _IsReadOnly = value;
+      }
+    }
+
+    /// <summary>
+    /// The sources of a composed board (area root + origin); empty for single-source boards.
+    /// </summary>
+    public BoardSource[] Sources {
+      get {
+        return _Sources;
+      }
+      set {
+        _Sources = value;
+      }
+    }
+
+    /// <summary>
+    /// The explicitly enabled (directed) transitions for moving cards between origins.
+    /// </summary>
+    public OriginTransition[] AllowedOriginTransitions {
+      get {
+        return _AllowedOriginTransitions;
+      }
+      set {
+        _AllowedOriginTransitions = value;
       }
     }
 

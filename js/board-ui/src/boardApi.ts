@@ -27,3 +27,25 @@ export async function getCards(boardId: string, limit: number = 1000): Promise<W
   });
   return cards || [];
 }
+
+/**
+ * IWorkItemRepository.TryUpdateEntityFields() of the given board.
+ * The key fields (Origin, OriginRelatedId) are added automatically; 'changedFields' uses the PascalCase field names.
+ * Returns the fields which were actually updated (null, if the card does not exist anymore).
+ */
+export async function tryUpdateCardFields(
+  boardId: string,
+  card: WorkItem,
+  changedFields: Record<string, unknown>
+): Promise<Record<string, unknown> | null> {
+  const fields: Record<string, unknown> = {
+    Origin: card.origin,
+    OriginRelatedId: card.originRelatedId
+  };
+  for (const [fieldName, value] of Object.entries(changedFields)) {
+    fields[fieldName] = value;
+  }
+  return await invokeUjmw<Record<string, unknown> | null>(getWorkItemServiceUrl(boardId), "TryUpdateEntityFields", {
+    fields: fields
+  });
+}

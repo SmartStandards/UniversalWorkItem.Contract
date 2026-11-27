@@ -34,6 +34,13 @@ namespace Collaboration.WorkTracking.Boards {
         descriptor.Title = board.Title;
         descriptor.IsReadOnly = board.IsReadOnly;
 
+        IBoardSourceInfo sourceInfo = board.Repository as IBoardSourceInfo;
+
+        if (sourceInfo != null) {
+          descriptor.Sources = sourceInfo.GetBoardSources();
+          descriptor.AllowedOriginTransitions = sourceInfo.GetAllowedOriginTransitions();
+        }
+
         result.Add(descriptor);
       }
 

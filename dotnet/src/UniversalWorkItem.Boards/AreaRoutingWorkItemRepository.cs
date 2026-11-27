@@ -17,12 +17,13 @@ namespace Collaboration.WorkTracking.Boards {
   ///     ('/ui/forms' of source 'repo-a' becomes '/repo-a/ui/forms').
   ///   * Creates are routed by the root segment of 'ConcernArea' (the root segment is removed before forwarding).
   ///   * Updates / deletes are routed by the key ('Origin', fallback: asking every source).
-  ///   * Changing the root segment of an existing card is rejected (no card moves in the MVP).
+  ///   * Changing the root segment of an existing card (via 'TryUpdateEntityFields') MOVES the card into the other
+  ///     source - but only if this directed origin transition was enabled explicitly (see 'AllowOriginTransition').
   ///   * Filters on 'ConcernArea' are not supported yet (they would have to be translated per source).
   ///   * Entities returned by the sources are copied before the area is rewritten, so the sources are never mutated.
   ///   This class will be refined after the MVP (epic Q14: dynamic routing, authentication, tenancy).
   /// </remarks>
-  public class AreaRoutingWorkItemRepository : IWorkItemRepository {
+  public class AreaRoutingWorkItemRepository : IWorkItemRepository, IBoardSourceInfo {
 
     private const string _ConcernAreaFieldName = "ConcernArea";
     private const string _OriginFieldName = "Origin";
@@ -30,6 +31,7 @@ namespace Collaboration.WorkTracking.Boards {
 
     private readonly string _OriginIdentity;
     private readonly List<RoutedSource> _Sources = new List<RoutedSource>();
+    private readonly List<OriginTransition> _AllowedOriginTransitions = new List<OriginTransition>();
 
     /// <summary>
     /// Creates an empty routing repository; sources are added via <see cref="AddSource"/>.
@@ -598,7 +600,15 @@ namespace Collaboration.WorkTracking.Boards {
       string areaKey = FindFieldName(sourceFields, _ConcernAreaFieldName);
 
       if (areaKey != null) {
-        sourceFields[areaKey] = ToSourceAreaOfSameSource(source, Convert.ToString(sourceFields[areaKey]));
+
+        string targetSourceArea;
+        RoutedSource targetSource = this.ResolveSourceByBoardArea(Convert.ToString(sourceFields[areaKey]), out targetSourceArea);
+
+        if (!ReferenceEquals(targetSource, source)) {
+          return this.MoveToOtherSource(source, targetSource, key, fields, targetSourceArea);
+        }
+
+        sourceFields[areaKey] = targetSourceArea;
       }
 
       return ToBoardFields(source, source.Repository.TryUpdateEntityFields(sourceFields));
@@ -710,7 +720,151 @@ namespace Collaboration.WorkTracking.Boards {
 
     #endregion
 
-    #region " Meta "
+    #region " Origin Transitions (moving cards between sources) "
+
+    /// <summary>
+    /// Explicitly enables moving cards from the source with the origin 'sourceOrigin' to the source with the
+    /// origin 'targetOrigin'. The transition is DIRECTED: the opposite direction has to be enabled separately.
+    /// Without an enabled transition every move between sources is rejected.
+    /// </summary>
+    public void AllowOriginTransition(string sourceOrigin, string targetOrigin) {
+
+      if (string.IsNullOrWhiteSpace(sourceOrigin)) {
+        throw new ArgumentException("The source origin must not be empty.", nameof(sourceOrigin));
+      }
+
+      if (string.IsNullOrWhiteSpace(targetOrigin)) {
+        throw new ArgumentException("The target origin must not be empty.", nameof(targetOrigin));
+      }
+
+      lock (_AllowedOriginTransitions) {
+
+        if (!this.IsOriginTransitionAllowed(sourceOrigin, targetOrigin)) {
+          _AllowedOriginTransitions.Add(new OriginTransition(sourceOrigin, targetOrigin));
+        }
+
+      }
+
+    }
+
+    /// <summary>
+    /// Returns all explicitly enabled (directed) origin transitions.
+    /// </summary>
+    public OriginTransition[] GetAllowedOriginTransitions() {
+
+      lock (_AllowedOriginTransitions) {
+        return _AllowedOriginTransitions.ToArray();
+      }
+
+    }
+
+    /// <summary>
+    /// Returns the area root ('/root') and origin of every registered source.
+    /// </summary>
+    public BoardSource[] GetBoardSources() {
+
+      return this.GetSources().Select((source) => new BoardSource("/" + source.RootSegment, source.Origin)).ToArray();
+
+    }
+
+    private bool IsOriginTransitionAllowed(string sourceOrigin, string targetOrigin) {
+
+      lock (_AllowedOriginTransitions) {
+
+        foreach (OriginTransition transition in _AllowedOriginTransitions) {
+
+          bool sourceMatches = string.Equals(transition.SourceOrigin, sourceOrigin, StringComparison.OrdinalIgnoreCase);
+          bool targetMatches = string.Equals(transition.TargetOrigin, targetOrigin, StringComparison.OrdinalIgnoreCase);
+
+          if (sourceMatches && targetMatches) {
+            return true;
+          }
+
+        }
+
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Moves a card into another source: the card is created within the target source (applying the given field
+    /// changes) and deleted from the original source afterwards. Returns the new key and the new board area.
+    /// </summary>
+    /// <remarks>
+    /// This is a destructive operation for the original source (the card is deleted there), so it is only
+    /// executed for explicitly enabled transitions (see <see cref="AllowOriginTransition"/>).
+    /// </remarks>
+    private Dictionary<string, object> MoveToOtherSource(
+      RoutedSource source, RoutedSource target, WorkItemIdentity key, Dictionary<string, object> fields, string targetSourceArea
+    ) {
+
+      if (source.Origin == null || target.Origin == null) {
+        throw new InvalidOperationException("Moving cards requires an 'Origin' for both sources.");
+      }
+
+      if (!this.IsOriginTransitionAllowed(source.Origin, target.Origin)) {
+        throw new InvalidOperationException(
+          $"Moving cards from '{source.Origin}' to '{target.Origin}' is not enabled (the transition must be allowed explicitly in the backend)."
+        );
+      }
+
+      WorkItem[] loaded = source.Repository.GetEntitiesByKey(new WorkItemIdentity[] { CopyKey(key) });
+
+      if (loaded.Length == 0 || loaded[0] == null) {
+        return null;
+      }
+
+      WorkItem movedEntity = CopyEntity(loaded[0]);
+
+      foreach (KeyValuePair<string, object> field in fields) {
+
+        bool isKeyOrArea = (
+          string.Equals(field.Key, _OriginFieldName, StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(field.Key, _OriginRelatedIdFieldName, StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(field.Key, _ConcernAreaFieldName, StringComparison.OrdinalIgnoreCase)
+        );
+
+        if (!isKeyOrArea) {
+          movedEntity[field.Key] = field.Value;
+        }
+
+      }
+
+      movedEntity.Origin = target.Origin;
+      movedEntity.ConcernArea = targetSourceArea;
+
+      if (target.Repository.ContainsKey(CopyKey(movedEntity))) {
+        movedEntity.OriginRelatedId = key.OriginRelatedId + "-from-" + source.RootSegment;
+      }
+
+      WorkItemIdentity newKey = target.Repository.TryAddEntity(movedEntity);
+
+      if (newKey == null || string.IsNullOrEmpty(newKey.OriginRelatedId)) {
+        throw new InvalidOperationException($"The card could not be created within '{target.Origin}'.");
+      }
+
+      WorkItemIdentity[] deletedKeys = source.Repository.TryDeleteEntities(new WorkItemIdentity[] { CopyKey(key) });
+
+      if (deletedKeys.Length == 0) {
+
+        // rollback - otherwise the card would exist twice
+        target.Repository.TryDeleteEntities(new WorkItemIdentity[] { newKey });
+
+        throw new InvalidOperationException($"The card could not be removed from '{source.Origin}' - the move was rolled back.");
+      }
+
+      Dictionary<string, object> result = new Dictionary<string, object>();
+      result[_OriginFieldName] = newKey.Origin;
+      result[_OriginRelatedIdFieldName] = newKey.OriginRelatedId;
+      result[_ConcernAreaFieldName] = ToBoardArea(target, targetSourceArea);
+
+      return result;
+    }
+
+    #endregion
+
+    #region " Meta " 
 
     /// <summary>
     /// Returns the capabilities shared by ALL sources (AND), except 'RequiresExternalKeys' (OR).

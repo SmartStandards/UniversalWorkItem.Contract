@@ -1,7 +1,23 @@
+export interface BoardSource {
+  /** Root segment of 'ConcernArea' including the leading slash, e.g. '/repo-alpha'. */
+  areaRoot: string;
+  origin: string;
+}
+
+/**
+ * A DIRECTED transition (explicitly enabled in the backend) which allows moving cards between origins.
+ */
+export interface OriginTransition {
+  sourceOrigin: string;
+  targetOrigin: string;
+}
+
 export interface BoardDescriptor {
   boardId: string;
   title: string;
   isReadOnly: boolean;
+  sources: BoardSource[] | null;
+  allowedOriginTransitions: OriginTransition[] | null;
 }
 
 /**

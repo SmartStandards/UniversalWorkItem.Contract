@@ -32,6 +32,12 @@ namespace Collaboration.WorkTracking.Boards {
       routing.AddSource("repo-beta", "mock:repo-beta", InMemoryWorkItemRepository.CreateDemo("mock:repo-beta", "Beta", 8));
       routing.AddSource("repo-gamma", "mock:repo-gamma", InMemoryWorkItemRepository.CreateDemo("mock:repo-gamma", "Gamma", 6));
 
+      // moving cards between sources must be enabled explicitly (DIRECTED!):
+      // alpha <-> beta in both directions, gamma -> alpha only, nothing into gamma
+      routing.AllowOriginTransition("mock:repo-alpha", "mock:repo-beta");
+      routing.AllowOriginTransition("mock:repo-beta", "mock:repo-alpha");
+      routing.AllowOriginTransition("mock:repo-gamma", "mock:repo-alpha");
+
       return routing;
     }
 
