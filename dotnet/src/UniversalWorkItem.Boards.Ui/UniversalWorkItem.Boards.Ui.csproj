@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>UniversalWorkItem.Boards.Ui</AssemblyName>
+    <RootNamespace>Collaboration.WorkTracking.Boards.Ui</RootNamespace>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Deterministic>false</Deterministic>
+    <NoWarn>$(NoWarn);1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="UJMW.DynamicController" Version="5.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UniversalWorkItem.Boards\UniversalWorkItem.Boards.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="BoardUi\index.html">
+      <LogicalName>UniversalWorkItem.BoardUi.index.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BoardUi\app.js">
+      <LogicalName>UniversalWorkItem.BoardUi.app.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BoardUi\app.css">
+      <LogicalName>UniversalWorkItem.BoardUi.app.css</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

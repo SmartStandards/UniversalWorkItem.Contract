@@ -22,10 +22,17 @@ This skill covers the **application layer**: hosting, UI, and the contracts the 
 
 | Target | Project | Notes |
 | --- | --- | --- |
-| Desktop | `UniversalWorkItem.Boards.Desktop` | `net10.0-windows`, WinForms, `WebViewAspNetCoreAdapter` embedded via T4, mount path `/`. |
-| Web host | `UniversalWorkItem.Boards.WebHost` | `net10.0`, ASP.NET Core; mounts the same UI under a configurable path. |
+| Desktop | `UWIboard.Desktop` | `net10.0-windows`, WinForms, `WebViewAspNetCoreAdapter` embedded via T4, mount path `/`. |
+| Web host | `UWIboard.AspNetCore` | `net10.0`, ASP.NET Core; mounts the same UI under a configurable path (`BoardUi:MountPath`). |
 
-Both call the same two extension methods from `UniversalWorkItem.Boards.Ui`: `AddBoardUi(services, config)` and `UseBoardUi(app, mountPath)`. Nothing host-specific goes into the UI library.
+Both call the same two extension methods from `UniversalWorkItem.Boards.Ui` (`BoardUiSetupExtensions`): `services.AddBoardUi(mountPath)` and `endpoints.MapBoardUi(mountPath)`. The host only registers its `BoardRegistry` (board id -> composed `IWorkItemRepository`) beforehand. Nothing host-specific goes into the UI library.
+
+UJMW routes (relative to the mount path):
+
+| Route | Contract |
+| --- | --- |
+| `boardApi/management/` | `IBoardManagementService` |
+| `boardApi/workItems/{boardId}/` | `IWorkItemRepository` of the board; `{boardId}` is bound as contextual argument and resolved by `BoardWorkItemRepositoryFacade`. |
 
 ## Communication rules
 
@@ -57,6 +64,8 @@ A view stores: column levels, vertical order field, grouping mode, collapsed nod
 ## UI technology
 
 - TypeScript, built as one classic IIFE bundle (`app.js` + `app.css`) into the embedded folder of `UniversalWorkItem.Boards.Ui`; the bundle is committed.
+- Source: `js/board-ui` (Vite library mode, format `iife`, output `dotnet/src/UniversalWorkItem.Boards.Ui/BoardUi`). Build with `npm install` + `npm run build` (runs `tsc --noEmit` first). `BoardUi/index.html` is maintained by hand and only hosts `<div id="app">` plus `app.css` / `app.js` (`defer`). Never edit the generated `app.js` / `app.css`.
+- Module layout: `ujmwClient.ts` (transport), `boardApi.ts` (contract calls), `model.ts` (WorkItem shape, root-state helpers), `viewState.ts` (view settings), `boardRenderer.ts` (rendering only), `main.ts` (shell).
 - The framework decision is open (epic Q9). Keep rendering logic separable from the transport layer so a later UShell module migration only replaces the shell.
 
 ## Coding rules (C#)

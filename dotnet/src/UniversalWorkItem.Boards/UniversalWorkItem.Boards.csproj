@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>UniversalWorkItem.Boards</AssemblyName>
+    <RootNamespace>Collaboration.WorkTracking.Boards</RootNamespace>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Deterministic>false</Deterministic>
+    <NoWarn>$(NoWarn);1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\..\dist\bin-net10.0\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FUSE-fx.EntityAnnotations" Version="4.2.2" />
+    <PackageReference Include="FUSE-fx.ModelDescription" Version="2.0.22" />
+    <PackageReference Include="FUSE-fx.ModelReader" Version="0.2.20" />
+    <PackageReference Include="FUSE-fx.RepositoryContract" Version="1.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UniversalWorkItem.Contract.net10.0\UniversalWorkItem.Contract.net10.0.csproj" />
+  </ItemGroup>
+
+</Project>
