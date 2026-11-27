@@ -43,6 +43,25 @@
 	}
 	// src/boardApi.ts
 	var managementServiceUrl = "boardApi/management/";
+	var configurationServiceUrl = "boardApi/configuration/";
+	async function getConnectorConfigurations() {
+		return await invokeUjmw(configurationServiceUrl, "GetConnectorConfigurations", {}) || [];
+	}
+	/**
+	* Returns an empty string on success, otherwise the error message.
+	*/
+	async function testConnectorConfiguration(configuration) {
+		return await invokeUjmw(configurationServiceUrl, "TestConnectorConfiguration", { configuration }) || "";
+	}
+	/**
+	* Returns the board id of the saved configuration.
+	*/
+	async function saveConnectorConfiguration(configuration) {
+		return await invokeUjmw(configurationServiceUrl, "SaveConnectorConfiguration", { configuration }) || "";
+	}
+	async function deleteConnectorConfiguration(boardId) {
+		return await invokeUjmw(configurationServiceUrl, "DeleteConnectorConfiguration", { boardId }) === true;
+	}
 	function getWorkItemServiceUrl(boardId) {
 		return "boardApi/workItems/" + encodeURIComponent(boardId) + "/";
 	}
@@ -339,8 +358,8 @@
 	var svgNamespace = "http://www.w3.org/2000/svg";
 	var draggedCard = null;
 	var draggedElement = null;
-	var dropIndicator = createElement("div", "drop-indicator");
-	function createElement(tagName, className, text) {
+	var dropIndicator = createElement$1("div", "drop-indicator");
+	function createElement$1(tagName, className, text) {
 		const element = document.createElement(tagName);
 		element.className = className;
 		if (text !== void 0) element.textContent = text;
@@ -378,7 +397,7 @@
 		return svg;
 	}
 	function createIconButton(className, icon, title, onClick) {
-		const button = createElement("button", className);
+		const button = createElement$1("button", className);
 		button.type = "button";
 		button.title = title;
 		button.setAttribute("aria-label", title);
@@ -466,18 +485,18 @@
 	}
 	function createCard(card, callbacks) {
 		const rootState = getRootState(card.progressState);
-		const element = createElement("article", "card state-border-" + rootState.toLowerCase());
+		const element = createElement$1("article", "card state-border-" + rootState.toLowerCase());
 		element.title = "Priority: " + String(card.manualReorderedPriority);
-		element.appendChild(createElement("div", "card-title", card.title));
-		const meta = createElement("div", "card-meta");
-		meta.appendChild(createElement("span", "state-badge state-" + rootState.toLowerCase(), getSubStateLabel(card.progressState)));
-		meta.appendChild(createElement("span", "card-id", card.origin + " #" + card.originRelatedId));
+		element.appendChild(createElement$1("div", "card-title", card.title));
+		const meta = createElement$1("div", "card-meta");
+		meta.appendChild(createElement$1("span", "state-badge state-" + rootState.toLowerCase(), getSubStateLabel(card.progressState)));
+		meta.appendChild(createElement$1("span", "card-id", card.origin + " #" + card.originRelatedId));
 		element.appendChild(meta);
-		element.appendChild(createElement("div", "card-area", card.concernArea || "/"));
-		if (card.assignedTo) element.appendChild(createElement("div", "card-assignee", card.assignedTo));
+		element.appendChild(createElement$1("div", "card-area", card.concernArea || "/"));
+		if (card.assignedTo) element.appendChild(createElement$1("div", "card-assignee", card.assignedTo));
 		if (card.tags && card.tags.length > 0) {
-			const tags = createElement("div", "card-tags");
-			for (const tag of card.tags) tags.appendChild(createElement("span", "tag", tag));
+			const tags = createElement$1("div", "card-tags");
+			for (const tag of card.tags) tags.appendChild(createElement$1("span", "tag", tag));
 			element.appendChild(tags);
 		}
 		element.tabIndex = 0;
@@ -512,7 +531,7 @@
 		for (const card of cards) container.appendChild(createCard(card, callbacks));
 	}
 	function createCell(leaf, column, row) {
-		const cell = createElement("div", leaf.collapsed ? "cell collapsed" : "cell");
+		const cell = createElement$1("div", leaf.collapsed ? "cell collapsed" : "cell");
 		cell.style.gridColumn = String(column);
 		cell.style.gridRow = String(row);
 		return cell;
@@ -522,17 +541,17 @@
 			const groupKey = "within|" + leaf.key + "|" + group;
 			const groupCards = leaf.cards.filter((card) => getDimensionValue(card, view.groupBy) === group);
 			const collapsed = view.collapsedGroups.has(groupKey);
-			const section = createElement("section", "group-section");
-			const header = createElement("div", collapsed ? "group-header within collapsed" : "group-header within");
-			header.appendChild(createElement("span", "group-chevron", collapsed ? "▸" : "▾"));
-			header.appendChild(createElement("span", "group-title", group));
-			header.appendChild(createElement("span", "count-pill", String(groupCards.length)));
+			const section = createElement$1("section", "group-section");
+			const header = createElement$1("div", collapsed ? "group-header within collapsed" : "group-header within");
+			header.appendChild(createElement$1("span", "group-chevron", collapsed ? "▸" : "▾"));
+			header.appendChild(createElement$1("span", "group-title", group));
+			header.appendChild(createElement$1("span", "count-pill", String(groupCards.length)));
 			header.addEventListener("click", () => {
 				toggle(view.collapsedGroups, groupKey);
 				callbacks.onViewChanged();
 			});
 			section.appendChild(header);
-			const body = createElement("div", "group-body");
+			const body = createElement$1("div", "group-body");
 			if (!collapsed) appendCards(body, groupCards, callbacks);
 			section.appendChild(body);
 			makeDropZone(section, body, {
@@ -546,7 +565,7 @@
 	* Creates the header of a column node (any level). Leaf headers of upper levels span down to the card rows.
 	*/
 	function createColumnHeader(node, column, maxDepth, view, callbacks) {
-		const header = createElement("div", node.depth === 0 ? "column-header level-0" : "column-header level-n");
+		const header = createElement$1("div", node.depth === 0 ? "column-header level-0" : "column-header level-n");
 		if (node.dimension === "status") header.classList.add("state-header-" + node.label.toLowerCase());
 		if (node.collapsed) header.classList.add("collapsed");
 		let rowSpan = 1;
@@ -555,11 +574,11 @@
 		header.style.gridRow = node.depth + 1 + " / span " + rowSpan;
 		header.style.top = node.depth * headerRowHeight + "px";
 		header.title = node.path;
-		const title = createElement("button", "header-toggle");
+		const title = createElement$1("button", "header-toggle");
 		title.type = "button";
 		title.title = (node.collapsed ? "Expand " : "Collapse ") + node.path;
-		if (!node.collapsed) title.appendChild(createElement("span", "header-title", node.label));
-		title.appendChild(createElement("span", "count-pill", String(node.cards.length)));
+		if (!node.collapsed) title.appendChild(createElement$1("span", "header-title", node.label));
+		title.appendChild(createElement$1("span", "count-pill", String(node.cards.length)));
 		title.addEventListener("click", () => {
 			toggle(view.collapsedColumns, node.key);
 			callbacks.onViewChanged();
@@ -601,9 +620,13 @@
 		const columns = buildColumnTree(sortedCards, view);
 		const leaves = collectLeaves(columns, []);
 		const maxDepth = Math.max(1, getMaxDepth(columns));
-		const grid = createElement("div", "board-grid");
+		const grid = createElement$1("div", "board-grid");
 		grid.style.gridTemplateColumns = leaves.map((leaf) => leaf.collapsed ? collapsedColumnWidth : expandedColumnWidth).join(" ");
 		if (callbacks.onCardDropped === null) grid.classList.add("read-only");
+		const headerBackdrop = createElement$1("div", "header-backdrop");
+		headerBackdrop.style.gridColumn = "1 / -1";
+		headerBackdrop.style.gridRow = "1 / span " + maxDepth;
+		grid.appendChild(headerBackdrop);
 		appendHeaders(grid, columns, 1, maxDepth, view, callbacks);
 		let row = maxDepth + 1;
 		if (view.groupBy !== "none" && view.groupingMode === "crossColumn") for (const group of getDistinctValues(sortedCards, view.groupBy)) {
@@ -611,11 +634,11 @@
 			const groupCards = sortedCards.filter((card) => getDimensionValue(card, view.groupBy) === group);
 			const groupAssignment = createGroupAssignment(view.groupBy, group);
 			const collapsed = view.collapsedGroups.has(groupKey);
-			const groupHeader = createElement("div", collapsed ? "group-header cross collapsed" : "group-header cross");
+			const groupHeader = createElement$1("div", collapsed ? "group-header cross collapsed" : "group-header cross");
 			if (view.groupBy === "status") groupHeader.classList.add("state-header-" + group.toLowerCase());
-			groupHeader.appendChild(createElement("span", "group-chevron", collapsed ? "▸" : "▾"));
-			groupHeader.appendChild(createElement("span", "group-title", group));
-			groupHeader.appendChild(createElement("span", "count-pill", String(groupCards.length)));
+			groupHeader.appendChild(createElement$1("span", "group-chevron", collapsed ? "▸" : "▾"));
+			groupHeader.appendChild(createElement$1("span", "group-title", group));
+			groupHeader.appendChild(createElement$1("span", "count-pill", String(groupCards.length)));
 			groupHeader.style.gridColumn = "1 / -1";
 			groupHeader.style.gridRow = String(row);
 			groupHeader.addEventListener("click", () => {
@@ -632,7 +655,7 @@
 				leaves.forEach((leaf, index) => {
 					const cell = createCell(leaf, index + 1, row);
 					const cellCards = leaf.cards.filter((card) => getDimensionValue(card, view.groupBy) === group);
-					if (leaf.collapsed) cell.appendChild(createElement("div", cellCards.length > 0 ? "collapsed-count" : "collapsed-count empty", String(cellCards.length)));
+					if (leaf.collapsed) cell.appendChild(createElement$1("div", cellCards.length > 0 ? "collapsed-count" : "collapsed-count empty", String(cellCards.length)));
 					else appendCards(cell, cellCards, callbacks);
 					makeDropZone(cell, cell, {
 						assignments: leaf.assignments.concat([groupAssignment]),
@@ -647,8 +670,8 @@
 			const cell = createCell(leaf, index + 1, row);
 			const grouped = view.groupBy !== "none";
 			if (leaf.collapsed) {
-				cell.appendChild(createElement("div", "collapsed-count", String(leaf.cards.length)));
-				cell.appendChild(createElement("div", "collapsed-label", leaf.path));
+				cell.appendChild(createElement$1("div", "collapsed-count", String(leaf.cards.length)));
+				cell.appendChild(createElement$1("div", "collapsed-label", leaf.path));
 			} else if (grouped) renderWithinColumnGroups(cell, leaf, view, callbacks);
 			else appendCards(cell, leaf.cards, callbacks);
 			makeDropZone(cell, cell, {
@@ -667,16 +690,16 @@
 	function renderMobileBoard(host, cards, view, callbacks, activeIndex, onActiveIndexChanged) {
 		const leaves = collectLeaves(buildColumnTree(cards.slice().sort((a, b) => (Number(b.manualReorderedPriority) || 0) - (Number(a.manualReorderedPriority) || 0)), view), []);
 		const pageIndex = Math.max(0, Math.min(activeIndex, leaves.length - 1));
-		const container = createElement("div", "mobile-board");
-		const tabs = createElement("nav", "mobile-tabs");
-		const pages = createElement("div", "mobile-pages");
+		const container = createElement$1("div", "mobile-board");
+		const tabs = createElement$1("nav", "mobile-tabs");
+		const pages = createElement$1("div", "mobile-pages");
 		const tabElements = [];
 		leaves.forEach((leaf, index) => {
-			const tab = createElement("button", "mobile-tab");
+			const tab = createElement$1("button", "mobile-tab");
 			tab.type = "button";
 			if (leaf.dimension === "status") tab.classList.add("state-header-" + leaf.label.toLowerCase());
-			tab.appendChild(createElement("span", "mobile-tab-title", leaf.path));
-			tab.appendChild(createElement("span", "count-pill", String(leaf.cards.length)));
+			tab.appendChild(createElement$1("span", "mobile-tab-title", leaf.path));
+			tab.appendChild(createElement$1("span", "count-pill", String(leaf.cards.length)));
 			tab.addEventListener("click", () => {
 				pages.scrollTo({
 					left: index * pages.clientWidth,
@@ -685,16 +708,16 @@
 			});
 			tabs.appendChild(tab);
 			tabElements.push(tab);
-			const page = createElement("section", "mobile-page");
-			const header = createElement("div", "column-header level-0 mobile-page-header");
+			const page = createElement$1("section", "mobile-page");
+			const header = createElement$1("div", "column-header level-0 mobile-page-header");
 			if (leaf.dimension === "status") header.classList.add("state-header-" + leaf.label.toLowerCase());
-			header.appendChild(createElement("span", "header-title", leaf.path));
-			header.appendChild(createElement("span", "count-pill", String(leaf.cards.length)));
+			header.appendChild(createElement$1("span", "header-title", leaf.path));
+			header.appendChild(createElement$1("span", "count-pill", String(leaf.cards.length)));
 			page.appendChild(header);
-			const cell = createElement("div", "cell mobile-cell");
+			const cell = createElement$1("div", "cell mobile-cell");
 			if (view.groupBy !== "none") renderWithinColumnGroups(cell, leaf, view, callbacks);
 			else appendCards(cell, leaf.cards, callbacks);
-			if (leaf.cards.length === 0) cell.appendChild(createElement("div", "mobile-empty", "No cards"));
+			if (leaf.cards.length === 0) cell.appendChild(createElement$1("div", "mobile-empty", "No cards"));
 			page.appendChild(cell);
 			pages.appendChild(page);
 		});
@@ -905,6 +928,201 @@
 			else cancelButton.focus();
 		});
 	}
+	// src/configurationDialog.ts
+	function createNewConfiguration() {
+		return {
+			boardId: "",
+			title: "",
+			connectorType: "GitHubIssues",
+			owner: "",
+			repositoryName: "",
+			accessToken: "",
+			hasAccessToken: false,
+			removeAccessToken: false,
+			isReadOnly: false,
+			maxIssues: 500
+		};
+	}
+	function createElement(tagName, className, text) {
+		const element = document.createElement(tagName);
+		element.className = className;
+		if (text !== void 0) element.textContent = text;
+		return element;
+	}
+	function createButton(text, className, onClick) {
+		const button = createElement("button", className, text);
+		button.type = "button";
+		button.addEventListener("click", onClick);
+		return button;
+	}
+	function createRow(caption, input, hint, wide) {
+		const row = createElement("label", wide ? "editor-row editor-row-wide" : "editor-row");
+		row.appendChild(createElement("span", "editor-caption", caption));
+		row.appendChild(input);
+		if (hint !== void 0) row.appendChild(createElement("span", "config-hint", hint));
+		return row;
+	}
+	function createTextInput(value, type = "text") {
+		const input = createElement("input", "editor-input");
+		input.type = type;
+		input.value = value;
+		return input;
+	}
+	/**
+	* Opens the connector configuration (list of connector boards + editor).
+	* Resolves the id of the last saved board (null, if nothing was changed).
+	*/
+	function openConfigurationDialog() {
+		return new Promise((resolve) => {
+			let changedBoardId = null;
+			let changed = false;
+			const dialog = createElement("dialog", "editor-dialog config-dialog");
+			const form = createElement("form", "editor-form");
+			form.method = "dialog";
+			const header = createElement("div", "editor-header");
+			header.appendChild(createElement("h2", "editor-title", "⚙ Connector configuration"));
+			const body = createElement("div", "config-body");
+			const list = createElement("div", "config-list");
+			const editor = createElement("div", "editor-body config-editor");
+			const status = createElement("div", "config-status");
+			body.appendChild(list);
+			body.appendChild(editor);
+			const buttons = createElement("div", "confirm-buttons");
+			const closeButton = createButton("Close", "button button-secondary", () => dialog.close());
+			buttons.appendChild(closeButton);
+			form.appendChild(header);
+			form.appendChild(body);
+			form.appendChild(status);
+			form.appendChild(buttons);
+			dialog.appendChild(form);
+			document.body.appendChild(dialog);
+			const setStatus = (text, isError) => {
+				status.textContent = text;
+				status.classList.toggle("error", isError);
+				status.classList.toggle("success", !isError && text.length > 0);
+			};
+			const renderEditor = (configuration) => {
+				const isNew = configuration.boardId === "";
+				const ownerInput = createTextInput(configuration.owner);
+				ownerInput.placeholder = "e.g. SmartStandards";
+				ownerInput.required = true;
+				const repositoryInput = createTextInput(configuration.repositoryName);
+				repositoryInput.placeholder = "e.g. UniversalWorkItem.Contract";
+				repositoryInput.required = true;
+				const titleInput = createTextInput(configuration.title);
+				titleInput.placeholder = "default: GitHub: owner/repository";
+				const tokenInput = createTextInput("", "password");
+				tokenInput.autocomplete = "off";
+				tokenInput.placeholder = configuration.hasAccessToken ? "•••••• stored - leave empty to keep" : "ghp_... / github_pat_... (empty = anonymous, public repos only)";
+				const maxIssuesInput = createTextInput(String(configuration.maxIssues), "number");
+				maxIssuesInput.min = "1";
+				maxIssuesInput.max = "5000";
+				const readOnlyInput = createElement("input", "");
+				readOnlyInput.type = "checkbox";
+				readOnlyInput.checked = configuration.isReadOnly;
+				const readOnlyRow = createElement("label", "config-checkbox");
+				readOnlyRow.appendChild(readOnlyInput);
+				readOnlyRow.appendChild(document.createTextNode(" read-only board (no changes are written to GitHub)"));
+				const removeTokenInput = createElement("input", "");
+				removeTokenInput.type = "checkbox";
+				const removeTokenRow = createElement("label", "config-checkbox");
+				removeTokenRow.appendChild(removeTokenInput);
+				removeTokenRow.appendChild(document.createTextNode(" remove the stored token"));
+				const collect = () => ({
+					boardId: configuration.boardId,
+					title: titleInput.value.trim(),
+					connectorType: "GitHubIssues",
+					owner: ownerInput.value.trim(),
+					repositoryName: repositoryInput.value.trim(),
+					accessToken: tokenInput.value.trim(),
+					hasAccessToken: configuration.hasAccessToken,
+					removeAccessToken: removeTokenInput.checked,
+					isReadOnly: readOnlyInput.checked,
+					maxIssues: Number(maxIssuesInput.value) || 500
+				});
+				const actions = createElement("div", "config-actions editor-row-wide");
+				const testButton = createButton("Test connection", "button button-secondary", async () => {
+					setStatus("Connecting to GitHub...", false);
+					try {
+						const message = await testConnectorConfiguration(collect());
+						if (message === "") setStatus("✔ Connection successful.", false);
+						else setStatus("✖ " + message, true);
+					} catch (error) {
+						setStatus(error instanceof Error ? error.message : String(error), true);
+					}
+				});
+				const saveButton = createButton(isNew ? "Add board" : "Save", "button", async () => {
+					if (!ownerInput.reportValidity() || !repositoryInput.reportValidity()) return;
+					setStatus("Saving...", false);
+					try {
+						const boardId = await saveConnectorConfiguration(collect());
+						changedBoardId = boardId;
+						changed = true;
+						setStatus("✔ Saved - the board '" + boardId + "' is available now.", false);
+						await reloadList(boardId);
+					} catch (error) {
+						setStatus(error instanceof Error ? error.message : String(error), true);
+					}
+				});
+				actions.appendChild(testButton);
+				actions.appendChild(saveButton);
+				if (!isNew) actions.appendChild(createButton("Delete", "button button-danger", async () => {
+					if (!window.confirm("Remove the board '" + configuration.boardId + "' (GitHub is not affected)?")) return;
+					try {
+						await deleteConnectorConfiguration(configuration.boardId);
+						changed = true;
+						changedBoardId = null;
+						setStatus("Board removed.", false);
+						await reloadList(null);
+					} catch (error) {
+						setStatus(error instanceof Error ? error.message : String(error), true);
+					}
+				}));
+				editor.replaceChildren(createElement("div", "config-section-title editor-row-wide", isNew ? "New GitHub Issues board" : "Board '" + configuration.boardId + "'"), createRow("Owner (user / organization)", ownerInput), createRow("Repository", repositoryInput), createRow("Title", titleInput, void 0, true), createRow("Personal access token", tokenInput, "Fine-grained PAT with 'Issues: Read' (or 'Read and write' for editing). Stored encrypted on the server, never sent back to the browser.", true), createRow("Max. issues", maxIssuesInput), readOnlyRow, configuration.hasAccessToken ? removeTokenRow : createElement("span", ""), actions);
+			};
+			const reloadList = async (selectBoardId) => {
+				const configurations = await getConnectorConfigurations();
+				list.replaceChildren();
+				let selected = null;
+				for (const configuration of configurations) {
+					const item = createButton("", "config-list-item", () => {
+						list.querySelectorAll(".config-list-item").forEach((element) => element.classList.remove("active"));
+						item.classList.add("active");
+						setStatus("", false);
+						renderEditor(configuration);
+					});
+					item.appendChild(createElement("span", "config-list-title", configuration.title));
+					item.appendChild(createElement("span", "config-list-detail", configuration.owner + "/" + configuration.repositoryName + (configuration.hasAccessToken ? " · 🔑" : "")));
+					if (configuration.boardId === selectBoardId) {
+						item.classList.add("active");
+						selected = configuration;
+					}
+					list.appendChild(item);
+				}
+				const addItem = createButton("+ Add GitHub Issues board", "config-list-item config-list-add", () => {
+					list.querySelectorAll(".config-list-item").forEach((element) => element.classList.remove("active"));
+					addItem.classList.add("active");
+					setStatus("", false);
+					renderEditor(createNewConfiguration());
+				});
+				list.appendChild(addItem);
+				if (selected !== null) renderEditor(selected);
+				else {
+					addItem.classList.add("active");
+					renderEditor(createNewConfiguration());
+				}
+			};
+			dialog.addEventListener("close", () => {
+				dialog.remove();
+				if (changed) resolve(changedBoardId === null ? "" : changedBoardId);
+				else resolve(null);
+			});
+			dialog.showModal();
+			reloadList(null).catch((error) => {
+				setStatus(error instanceof Error ? error.message : String(error), true);
+			});
+		});
+	}
 	// src/main.ts
 	var priorityStep = 1e3;
 	function createSelect(labels) {
@@ -1086,6 +1304,7 @@
 			this.crossColumnSwitch = document.createElement("input");
 			this.crossColumnField = createSwitch(this.crossColumnSwitch, "Within column", "Cross-column rows");
 			this.reloadButton = document.createElement("button");
+			this.settingsButton = document.createElement("button");
 			this.statusElement = document.createElement("span");
 			this.boardElement = document.createElement("main");
 			this.mobileQuery = window.matchMedia("(max-width: 700px)");
@@ -1114,10 +1333,19 @@
 			toolbar.appendChild(createCombo("Group by", this.groupBySelector));
 			toolbar.appendChild(this.crossColumnField);
 			toolbar.appendChild(this.reloadButton);
+			toolbar.appendChild(this.settingsButton);
 			toolbar.appendChild(this.statusElement);
 			root.replaceChildren(toolbar, this.boardElement);
 			this.boardSelector.addEventListener("change", () => this.loadCards());
 			this.reloadButton.addEventListener("click", () => this.loadCards());
+			this.settingsButton.type = "button";
+			this.settingsButton.className = "button button-secondary";
+			this.settingsButton.textContent = "⚙ Connectors";
+			this.settingsButton.title = "Configure the connectors (e.g. GitHub repository and access token)";
+			this.settingsButton.addEventListener("click", async () => {
+				const savedBoardId = await openConfigurationDialog();
+				if (savedBoardId !== null) await this.loadBoards(savedBoardId);
+			});
 			this.columnsSelector.addEventListener("change", () => {
 				const view = this.currentView;
 				view.columns = this.columnsSelector.value;
@@ -1162,8 +1390,9 @@
 		start() {
 			this.loadBoards();
 		}
-		async loadBoards() {
+		async loadBoards(preferredBoardId = "") {
 			try {
+				const previousBoardId = this.currentBoardId;
 				this.setStatus("Loading boards...");
 				this.boards = await getBoards();
 				this.boardSelector.replaceChildren();
@@ -1173,6 +1402,8 @@
 					option.textContent = board.title;
 					this.boardSelector.appendChild(option);
 				}
+				const selection = preferredBoardId || previousBoardId;
+				if (selection && this.boards.some((board) => board.boardId === selection)) this.boardSelector.value = selection;
 				await this.loadCards();
 			} catch (error) {
 				this.reportError(error);

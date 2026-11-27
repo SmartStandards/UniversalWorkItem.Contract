@@ -28,9 +28,53 @@ namespace Collaboration.WorkTracking.Boards {
       }
 
       BoardRegistration registration = new BoardRegistration(boardId, title, isReadOnly, repository);
+      BoardRegistration replaced = null;
 
       lock (_Boards) {
+        _Boards.TryGetValue(boardId, out replaced);
         _Boards[boardId] = registration;
+      }
+
+      DisposeRepository(replaced, repository);
+
+    }
+
+    /// <summary>
+    /// Removes the board with the given id (its repository is disposed, if disposable).
+    /// Returns false if there was no such board.
+    /// </summary>
+    public bool Unregister(string boardId) {
+
+      if (string.IsNullOrWhiteSpace(boardId)) {
+        return false;
+      }
+
+      BoardRegistration removed = null;
+
+      lock (_Boards) {
+
+        if (!_Boards.TryGetValue(boardId, out removed)) {
+          return false;
+        }
+
+        _Boards.Remove(boardId);
+      }
+
+      DisposeRepository(removed, null);
+
+      return true;
+    }
+
+    private static void DisposeRepository(BoardRegistration registration, IWorkItemRepository stillUsedRepository) {
+
+      if (registration == null || ReferenceEquals(registration.Repository, stillUsedRepository)) {
+        return;
+      }
+
+      IDisposable disposable = registration.Repository as IDisposable;
+
+      if (disposable != null) {
+        disposable.Dispose();
       }
 
     }

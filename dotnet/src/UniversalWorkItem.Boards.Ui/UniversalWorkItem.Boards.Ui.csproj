@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UniversalWorkItem.Boards\UniversalWorkItem.Boards.csproj" />
+    <ProjectReference Include="..\UniversalWorkItem.Connectors.GitHubIssues.net10.0\UniversalWorkItem.Connectors.GitHubIssues.net10.0.csproj" />
   </ItemGroup>
 
   <ItemGroup>

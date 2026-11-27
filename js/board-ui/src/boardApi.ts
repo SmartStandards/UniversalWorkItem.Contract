@@ -2,6 +2,49 @@ import { invokeUjmw } from "./ujmwClient";
 import { BoardDescriptor, WorkItem } from "./model";
 
 const managementServiceUrl = "boardApi/management/";
+const configurationServiceUrl = "boardApi/configuration/";
+
+/**
+ * Connector configuration as exchanged with IConnectorConfigurationService (the access token is write-only).
+ */
+export interface ConnectorConfiguration {
+  boardId: string;
+  title: string;
+  connectorType: string;
+  owner: string;
+  repositoryName: string;
+  accessToken: string;
+  hasAccessToken: boolean;
+  removeAccessToken: boolean;
+  isReadOnly: boolean;
+  maxIssues: number;
+}
+
+export async function getConnectorConfigurations(): Promise<ConnectorConfiguration[]> {
+  const configurations = await invokeUjmw<ConnectorConfiguration[] | null>(configurationServiceUrl, "GetConnectorConfigurations", {});
+  return configurations || [];
+}
+
+/**
+ * Returns an empty string on success, otherwise the error message.
+ */
+export async function testConnectorConfiguration(configuration: ConnectorConfiguration): Promise<string> {
+  const message = await invokeUjmw<string | null>(configurationServiceUrl, "TestConnectorConfiguration", { configuration: configuration });
+  return message || "";
+}
+
+/**
+ * Returns the board id of the saved configuration.
+ */
+export async function saveConnectorConfiguration(configuration: ConnectorConfiguration): Promise<string> {
+  const boardId = await invokeUjmw<string | null>(configurationServiceUrl, "SaveConnectorConfiguration", { configuration: configuration });
+  return boardId || "";
+}
+
+export async function deleteConnectorConfiguration(boardId: string): Promise<boolean> {
+  const deleted = await invokeUjmw<boolean | null>(configurationServiceUrl, "DeleteConnectorConfiguration", { boardId: boardId });
+  return deleted === true;
+}
 
 function getWorkItemServiceUrl(boardId: string): string {
   return "boardApi/workItems/" + encodeURIComponent(boardId) + "/";

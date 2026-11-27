@@ -430,6 +430,13 @@ export function renderBoard(host: HTMLElement, cards: WorkItem[], view: ViewStat
     grid.classList.add("read-only");
   }
 
+  // opaque band behind all header rows: covers the column gaps and rounded corners,
+  // so scrolled cells / group rows never shine through between or above the sticky headers
+  const headerBackdrop = createElement("div", "header-backdrop");
+  headerBackdrop.style.gridColumn = "1 / -1";
+  headerBackdrop.style.gridRow = "1 / span " + maxDepth;
+  grid.appendChild(headerBackdrop);
+
   appendHeaders(grid, columns, 1, maxDepth, view, callbacks);
 
   let row = maxDepth + 1;

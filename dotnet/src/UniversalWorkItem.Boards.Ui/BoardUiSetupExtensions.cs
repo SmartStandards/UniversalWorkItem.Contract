@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,11 @@ namespace Collaboration.WorkTracking.Boards {
     /// </summary>
     public const string WorkItemsRouteSegment = "boardApi/workItems/{boardId}";
 
+    /// <summary>
+    /// Route segment (relative to the mount path) of the UJMW endpoint for <see cref="IConnectorConfigurationService"/>.
+    /// </summary>
+    public const string ConfigurationRouteSegment = "boardApi/configuration";
+
     private const string _BoardIdArgumentName = "BoardId";
 
     private const string _ResourcePrefix = "UniversalWorkItem.BoardUi.";
@@ -50,7 +56,23 @@ namespace Collaboration.WorkTracking.Boards {
       services.TryAddSingleton<IBoardManagementService, BoardManagementService>();
       services.TryAddSingleton<IWorkItemRepository, BoardWorkItemRepositoryFacade>();
 
+      // the connector secrets are encrypted at rest (shared key ring for both launch targets)
+      services.AddDataProtection().SetApplicationName("UWIboard");
+
+      services.TryAddSingleton<ConnectorConfigurationStore>((serviceProvider) => new ConnectorConfigurationStore(
+        ConnectorConfigurationStore.GetDefaultFilePath(),
+        serviceProvider.GetRequiredService<IDataProtectionProvider>()
+      ));
+      services.TryAddSingleton<IConnectorConfigurationService, ConnectorConfigurationService>();
+
       services.AddDynamicUjmwControllers((registrar) => {
+
+        registrar.AddControllerFor<IConnectorConfigurationService>((options) => {
+          options.ControllerRoute = routePrefix + ConfigurationRouteSegment;
+          options.ControllerTitle = "Connector Configuration";
+          options.EnableRequestSidechannel = false;
+          options.EnableResponseSidechannel = false;
+        });
 
         registrar.AddControllerFor<IBoardManagementService>((options) => {
           options.ControllerRoute = routePrefix + ManagementRouteSegment;
@@ -91,6 +113,8 @@ namespace Collaboration.WorkTracking.Boards {
       string routePrefix = NormalizeRoutePrefix(mountPath);
       Dictionary<string, byte[]> files = LoadEmbeddedFiles(typeof(BoardUiSetupExtensions).Assembly);
 
+      RegisterConfiguredBoards(endpoints.ServiceProvider);
+
       foreach (KeyValuePair<string, byte[]> file in files) {
 
         byte[] content = file.Value;
@@ -130,6 +154,20 @@ namespace Collaboration.WorkTracking.Boards {
 
         return indexHandler.Invoke(context);
       });
+
+    }
+
+    /// <summary>
+    /// Adds the connector boards of the persisted configuration to the board registry.
+    /// </summary>
+    private static void RegisterConfiguredBoards(IServiceProvider serviceProvider) {
+
+      ConnectorConfigurationStore store = serviceProvider.GetRequiredService<ConnectorConfigurationStore>();
+      BoardRegistry registry = serviceProvider.GetRequiredService<BoardRegistry>();
+
+      foreach (string problem in ConnectorConfigurationService.RegisterStoredBoards(store, registry)) {
+        Console.Error.WriteLine("Connector configuration skipped: " + problem);
+      }
 
     }
 

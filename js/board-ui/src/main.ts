@@ -3,6 +3,7 @@ import { getBoards, getCards, tryUpdateCardFields } from "./boardApi";
 import { BoardDescriptor, RootStates, WorkItem, getAreaRoot, getRootState } from "./model";
 import { DropTarget, renderBoard, renderMobileBoard } from "./boardRenderer";
 import { openCardEditor } from "./cardEditor";
+import { openConfigurationDialog } from "./configurationDialog";
 import { Assignment, isAreaWithin } from "./columns";
 import {
   ColumnDimensionLabels,
@@ -256,6 +257,7 @@ class BoardApp {
   private readonly crossColumnSwitch = document.createElement("input");
   private readonly crossColumnField = createSwitch(this.crossColumnSwitch, "Within column", "Cross-column rows");
   private readonly reloadButton = document.createElement("button");
+  private readonly settingsButton = document.createElement("button");
   private readonly statusElement = document.createElement("span");
   private readonly boardElement = document.createElement("main");
   private readonly mobileQuery = window.matchMedia("(max-width: 700px)");
@@ -291,12 +293,23 @@ class BoardApp {
     toolbar.appendChild(createCombo("Group by", this.groupBySelector));
     toolbar.appendChild(this.crossColumnField);
     toolbar.appendChild(this.reloadButton);
+    toolbar.appendChild(this.settingsButton);
     toolbar.appendChild(this.statusElement);
 
     root.replaceChildren(toolbar, this.boardElement);
 
     this.boardSelector.addEventListener("change", () => this.loadCards());
     this.reloadButton.addEventListener("click", () => this.loadCards());
+    this.settingsButton.type = "button";
+    this.settingsButton.className = "button button-secondary";
+    this.settingsButton.textContent = "\u2699 Connectors";
+    this.settingsButton.title = "Configure the connectors (e.g. GitHub repository and access token)";
+    this.settingsButton.addEventListener("click", async () => {
+      const savedBoardId = await openConfigurationDialog();
+      if (savedBoardId !== null) {
+        await this.loadBoards(savedBoardId);
+      }
+    });
     this.columnsSelector.addEventListener("change", () => {
       const view = this.currentView;
       view.columns = this.columnsSelector.value as Dimension;
@@ -351,8 +364,9 @@ class BoardApp {
     this.loadBoards();
   }
 
-  private async loadBoards(): Promise<void> {
+  private async loadBoards(preferredBoardId: string = ""): Promise<void> {
     try {
+      const previousBoardId = this.currentBoardId;
       this.setStatus("Loading boards...");
       this.boards = await getBoards();
       this.boardSelector.replaceChildren();
@@ -361,6 +375,10 @@ class BoardApp {
         option.value = board.boardId;
         option.textContent = board.title;
         this.boardSelector.appendChild(option);
+      }
+      const selection = preferredBoardId || previousBoardId;
+      if (selection && this.boards.some((board) => board.boardId === selection)) {
+        this.boardSelector.value = selection;
       }
       await this.loadCards();
     } catch (error) {
